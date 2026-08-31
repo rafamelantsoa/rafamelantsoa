@@ -24,7 +24,7 @@ const allowedOrigins = [
   CLIENT_URL,
   ADMIN_URL,
   // Production — Cloudflare 
-  "https://portfolio.anicolasrayden.workers.dev",
+  "https://rafamelantsoa.anicolasrayden.workers.dev/",
   
 ];
 
