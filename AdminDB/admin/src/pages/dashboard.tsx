@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
+
 import axios from "axios";
+
 import {
   FolderKanban,
   BarChart3,
@@ -55,12 +57,11 @@ type WorkData = {
 const API_URL =
   import.meta.env.VITE_API_URL || "http://localhost:5000";
 
-  const REALISATIONS_API =
-  `${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/realisations`;
+const REALISATIONS_API =
+  `${API_URL}/api/realisations`;
 
 const WORK_API =
-  `${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/work`;
-
+  `${API_URL}/api/work`;
 
 const Dashboard = () => {
   const [realisations, setRealisations] =
@@ -97,7 +98,9 @@ const Dashboard = () => {
         realisationsResponse.data
       );
 
-      setWork(workResponse.data);
+      setWork(
+        workResponse.data
+      );
     } catch (error) {
       console.error(
         "Erreur récupération Dashboard:",
@@ -167,11 +170,13 @@ const Dashboard = () => {
   const statsCount =
     work.stats.length;
 
-  const galleryCount = projects.reduce(
-    (total, project) =>
-      total + (project.gallery?.length || 0),
-    0
-  );
+  const galleryCount =
+    projects.reduce(
+      (total, project) =>
+        total +
+        (project.gallery?.length || 0),
+      0
+    );
 
   return (
     <div className="space-y-6 p-6">
@@ -213,6 +218,7 @@ const Dashboard = () => {
 
       {/* STATS */}
       <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+
         {/* PROJECTS */}
         <div className="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900">
           <div className="flex items-start justify-between">
@@ -309,15 +315,17 @@ const Dashboard = () => {
 
       {/* CONTENT */}
       <div className="grid gap-6 xl:grid-cols-3">
+
         {/* RECENT PROJECTS */}
-        <div className="xl:col-span-2 rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
+        <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900 xl:col-span-2">
+
           <div className="mb-6 flex items-center justify-between">
             <div>
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
                 Projets
               </h2>
 
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                 Vos réalisations actuelles.
               </p>
             </div>
@@ -338,7 +346,7 @@ const Dashboard = () => {
                 className="mx-auto text-gray-400"
               />
 
-              <p className="mt-3 text-sm text-gray-500">
+              <p className="mt-3 text-sm text-gray-500 dark:text-gray-400">
                 Aucun projet pour le moment.
               </p>
             </div>
@@ -373,8 +381,8 @@ const Dashboard = () => {
                         {" · "}
                         {project.gallery?.length || 0}{" "}
                         image
-                        {(project.gallery?.length ||
-                          0) > 1
+                        {(project.gallery?.length || 0) >
+                        1
                           ? "s"
                           : ""}
                       </p>
@@ -392,13 +400,14 @@ const Dashboard = () => {
 
         {/* WORK SUMMARY */}
         <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
+
           <div className="mb-6 flex items-center justify-between">
             <div>
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
                 Work
               </h2>
 
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                 Résumé de la section.
               </p>
             </div>
@@ -458,13 +467,14 @@ const Dashboard = () => {
 
       {/* MARQUEE */}
       <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
+
         <div className="mb-5 flex items-center justify-between">
           <div>
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
               Marquee
             </h2>
 
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
               Éléments actuellement configurés.
             </p>
           </div>
@@ -479,7 +489,7 @@ const Dashboard = () => {
         </div>
 
         {work.marquee.length === 0 ? (
-          <p className="rounded-lg bg-gray-50 px-4 py-5 text-center text-sm text-gray-500 dark:bg-gray-800/50">
+          <p className="rounded-lg bg-gray-50 px-4 py-5 text-center text-sm text-gray-500 dark:bg-gray-800/50 dark:text-gray-400">
             Aucun élément dans le marquee.
           </p>
         ) : (

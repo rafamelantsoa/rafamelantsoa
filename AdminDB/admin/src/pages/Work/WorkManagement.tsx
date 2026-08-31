@@ -7,6 +7,10 @@ import {
   Trash2,
   Loader2,
 } from "lucide-react";
+import axiosInstance from "../../services/axiosInstance";
+
+// Si ton fichier axiosInstance est dans un autre dossier,
+// adapte uniquement ce chemin d'import.
 
 type Stat = {
   number: number;
@@ -21,34 +25,26 @@ type WorkData = {
   description: string;
 };
 
-const API_URL =
-  `${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/work`;
-
 const WorkManagement = () => {
-  const [data, setData] =
-    useState<WorkData | null>(null);
-
+  const [data, setData] = useState<WorkData | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
   /*
-  |--------------------------------------------------------------------------
-  | GET DATA
-  |--------------------------------------------------------------------------
-  */
+   |--------------------------------------------------------------------------
+   | GET DATA
+   |--------------------------------------------------------------------------
+   */
 
   const fetchWork = async () => {
     try {
       setLoading(true);
 
-      const response = await axios.get(API_URL);
+      const response = await axiosInstance.get("/work");
 
       setData(response.data);
     } catch (error) {
-      console.error(
-        "Erreur récupération Work:",
-        error
-      );
+      console.error("Erreur récupération Work:", error);
 
       toast.error(
         "Impossible de charger la section Work."
@@ -63,10 +59,10 @@ const WorkManagement = () => {
   }, []);
 
   /*
-  |--------------------------------------------------------------------------
-  | UPDATE STAT
-  |--------------------------------------------------------------------------
-  */
+   |--------------------------------------------------------------------------
+   | UPDATE STAT
+   |--------------------------------------------------------------------------
+   */
 
   const updateStat = (
     index: number,
@@ -92,25 +88,28 @@ const WorkManagement = () => {
   };
 
   /*
-  |--------------------------------------------------------------------------
-  | ADD MARQUEE
-  |--------------------------------------------------------------------------
-  */
+   |--------------------------------------------------------------------------
+   | ADD MARQUEE
+   |--------------------------------------------------------------------------
+   */
 
   const addMarquee = () => {
     if (!data) return;
 
     setData({
       ...data,
-      marquee: [...data.marquee, "NEW ITEM"],
+      marquee: [
+        ...data.marquee,
+        "NEW ITEM",
+      ],
     });
   };
 
   /*
-  |--------------------------------------------------------------------------
-  | UPDATE MARQUEE
-  |--------------------------------------------------------------------------
-  */
+   |--------------------------------------------------------------------------
+   | UPDATE MARQUEE
+   |--------------------------------------------------------------------------
+   */
 
   const updateMarquee = (
     index: number,
@@ -129,10 +128,10 @@ const WorkManagement = () => {
   };
 
   /*
-  |--------------------------------------------------------------------------
-  | DELETE MARQUEE
-  |--------------------------------------------------------------------------
-  */
+   |--------------------------------------------------------------------------
+   | DELETE MARQUEE
+   |--------------------------------------------------------------------------
+   */
 
   const deleteMarquee = (index: number) => {
     if (!data) return;
@@ -148,10 +147,10 @@ const WorkManagement = () => {
   };
 
   /*
-  |--------------------------------------------------------------------------
-  | SAVE
-  |--------------------------------------------------------------------------
-  */
+   |--------------------------------------------------------------------------
+   | SAVE
+   |--------------------------------------------------------------------------
+   */
 
   const handleSave = async () => {
     if (!data) return;
@@ -189,18 +188,28 @@ const WorkManagement = () => {
     try {
       setSaving(true);
 
-      const response = await axios.put(
-        API_URL,
+      const response = await axiosInstance.put(
+        "/work",
         {
           stats: data.stats,
           marquee: data.marquee,
           title: data.title.trim(),
-          description:
-            data.description.trim(),
+          description: data.description.trim(),
         }
       );
 
-      setData(response.data.data);
+      /*
+       * Selon ton controller backend,
+       * la réponse peut être directement l'objet
+       * ou { data: objet }.
+       *
+       * On gère les deux cas.
+       */
+
+      setData(
+        response.data?.data ??
+          response.data
+      );
 
       toast.success(
         "Section Work mise à jour avec succès."
@@ -227,10 +236,10 @@ const WorkManagement = () => {
   };
 
   /*
-  |--------------------------------------------------------------------------
-  | LOADING
-  |--------------------------------------------------------------------------
-  */
+   |--------------------------------------------------------------------------
+   | LOADING
+   |--------------------------------------------------------------------------
+   */
 
   if (loading) {
     return (
@@ -250,10 +259,10 @@ const WorkManagement = () => {
   }
 
   /*
-  |--------------------------------------------------------------------------
-  | ERROR
-  |--------------------------------------------------------------------------
-  */
+   |--------------------------------------------------------------------------
+   | ERROR
+   |--------------------------------------------------------------------------
+   */
 
   if (!data) {
     return (
@@ -276,10 +285,10 @@ const WorkManagement = () => {
   }
 
   /*
-  |--------------------------------------------------------------------------
-  | RENDER
-  |--------------------------------------------------------------------------
-  */
+   |--------------------------------------------------------------------------
+   | RENDER
+   |--------------------------------------------------------------------------
+   */
 
   return (
     <div className="space-y-6 p-6">
@@ -311,11 +320,13 @@ const WorkManagement = () => {
         </div>
 
         <div className="grid gap-5 md:grid-cols-2">
+
           {data.stats.map((stat, index) => (
             <div
               key={index}
               className="rounded-xl border border-gray-200 p-5 dark:border-gray-800"
             >
+
               <div className="mb-4">
                 <span className="text-xs font-medium uppercase tracking-wide text-gray-400">
                   Statistique {index + 1}
@@ -323,6 +334,9 @@ const WorkManagement = () => {
               </div>
 
               <div className="space-y-4">
+
+                {/* NUMBER */}
+
                 <div>
                   <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Nombre
@@ -342,6 +356,8 @@ const WorkManagement = () => {
                   />
                 </div>
 
+                {/* LABEL */}
+
                 <div>
                   <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Libellé
@@ -360,9 +376,11 @@ const WorkManagement = () => {
                     className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm outline-none focus:border-[#2464cc] dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                   />
                 </div>
+
               </div>
             </div>
           ))}
+
         </div>
       </div>
 
@@ -390,14 +408,17 @@ const WorkManagement = () => {
             <Plus size={17} />
             Ajouter
           </button>
+
         </div>
 
         <div className="space-y-3">
+
           {data.marquee.map((item, index) => (
             <div
               key={index}
               className="flex items-center gap-3"
             >
+
               <input
                 type="text"
                 value={item}
@@ -419,6 +440,7 @@ const WorkManagement = () => {
               >
                 <Trash2 size={17} />
               </button>
+
             </div>
           ))}
 
@@ -427,6 +449,7 @@ const WorkManagement = () => {
               Aucun élément dans le marquee.
             </p>
           )}
+
         </div>
       </div>
 
@@ -452,6 +475,7 @@ const WorkManagement = () => {
             disabled={saving}
             className="inline-flex items-center gap-2 rounded-lg bg-[#2464cc] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[#1d55b0] disabled:cursor-not-allowed disabled:opacity-50"
           >
+
             {saving ? (
               <Loader2
                 size={17}
@@ -464,7 +488,9 @@ const WorkManagement = () => {
             {saving
               ? "Enregistrement..."
               : "Enregistrer"}
+
           </button>
+
         </div>
 
         <div className="space-y-5">
@@ -503,8 +529,7 @@ const WorkManagement = () => {
               onChange={(e) =>
                 setData({
                   ...data,
-                  description:
-                    e.target.value,
+                  description: e.target.value,
                 })
               }
               className="w-full resize-none rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm outline-none focus:border-[#2464cc] dark:border-gray-700 dark:bg-gray-800 dark:text-white"
@@ -514,6 +539,7 @@ const WorkManagement = () => {
 
         </div>
       </div>
+
     </div>
   );
 };

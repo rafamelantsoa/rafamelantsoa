@@ -1,9 +1,6 @@
 import { useEffect, useState } from "react";
-
 import axios from "axios";
-
 import toast from "react-hot-toast";
-
 import {
   Plus,
   Save,
@@ -16,6 +13,7 @@ import {
 } from "lucide-react";
 
 import { useLoading } from "../../context/LoadingContext";
+import axiosInstance from "../../services/api";
 
 /* ================================================================
    TYPES
@@ -52,77 +50,57 @@ type RealisationsData = {
    API
 ================================================================ */
 
-const API_URL =
-  `${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/realisations`;
+// axiosInstance possède déjà la baseURL.
+// Exemple local : http://localhost:5000
+const API_URL = "/api/realisations";
+
 /* ================================================================
    COMPONENT
 ================================================================ */
 
 const RealisationsManagement = () => {
-  const { startLoading, stopLoading } =
-    useLoading();
+  const { startLoading, stopLoading } = useLoading();
 
-  const [data, setData] =
-    useState<RealisationsData | null>(null);
+  const [data, setData] = useState<RealisationsData | null>(null);
 
-  const [savingSection, setSavingSection] =
-    useState(false);
+  const [savingSection, setSavingSection] = useState(false);
+  const [savingProject, setSavingProject] = useState(false);
 
-  const [savingProject, setSavingProject] =
-    useState(false);
+  const [deletingProject, setDeletingProject] = useState<string | null>(
+    null
+  );
 
-  const [deletingProject, setDeletingProject] =
-    useState<string | null>(null);
+  const [editingProject, setEditingProject] = useState<Project | null>(
+    null
+  );
 
-  const [editingProject, setEditingProject] =
-    useState<Project | null>(null);
-
-  const [showAddProject, setShowAddProject] =
-    useState(false);
+  const [showAddProject, setShowAddProject] = useState(false);
 
   /* ================================================================
      FORM
   ================================================================ */
 
-  const [projectTitle, setProjectTitle] =
-    useState("");
+  const [projectTitle, setProjectTitle] = useState("");
+  const [projectCategory, setProjectCategory] = useState("");
+  const [projectDescription, setProjectDescription] = useState("");
+  const [projectClient, setProjectClient] = useState("");
+  const [projectYear, setProjectYear] = useState("");
+  const [projectServices, setProjectServices] = useState("");
+  const [projectUrl, setProjectUrl] = useState("");
 
-  const [projectCategory, setProjectCategory] =
-    useState("");
-
-  const [projectDescription, setProjectDescription] =
-    useState("");
-
-  const [projectClient, setProjectClient] =
-    useState("");
-
-  const [projectYear, setProjectYear] =
-    useState("");
-
-  const [projectServices, setProjectServices] =
-    useState("");
-
-  const [projectUrl, setProjectUrl] =
-    useState("");
-
-  const [projectImage, setProjectImage] =
-    useState<File | null>(null);
-
-  const [previewImage, setPreviewImage] =
-    useState<string | null>(null);
+  const [projectImage, setProjectImage] = useState<File | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   /* ================================================================
      GALLERY
   ================================================================ */
 
-  const [galleryFiles, setGalleryFiles] =
-    useState<File[]>([]);
+  const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
+  const [galleryPreviews, setGalleryPreviews] = useState<string[]>([]);
 
-  const [galleryPreviews, setGalleryPreviews] =
-    useState<string[]>([]);
-
-  const [deletingGalleryImage, setDeletingGalleryImage] =
-    useState<string | null>(null);
+  const [deletingGalleryImage, setDeletingGalleryImage] = useState<
+    string | null
+  >(null);
 
   /* ================================================================
      GET DATA
@@ -132,15 +110,11 @@ const RealisationsManagement = () => {
     try {
       startLoading();
 
-      const response =
-        await axios.get(API_URL);
+      const response = await axiosInstance.get(API_URL);
 
       setData(response.data);
     } catch (error) {
-      console.error(
-        "Erreur récupération réalisations:",
-        error
-      );
+      console.error("Erreur récupération réalisations:", error);
 
       toast.error(
         "Impossible de charger les réalisations."
@@ -162,16 +136,12 @@ const RealisationsManagement = () => {
     if (!data) return;
 
     if (!data.title.trim()) {
-      toast.error(
-        "Le grand titre est obligatoire."
-      );
+      toast.error("Le grand titre est obligatoire.");
       return;
     }
 
     if (!data.description.trim()) {
-      toast.error(
-        "Le paragraphe est obligatoire."
-      );
+      toast.error("Le paragraphe est obligatoire.");
       return;
     }
 
@@ -179,12 +149,10 @@ const RealisationsManagement = () => {
       setSavingSection(true);
       startLoading();
 
-      const response =
-        await axios.put(API_URL, {
-          title: data.title.trim(),
-          description:
-            data.description.trim(),
-        });
+      const response = await axiosInstance.put(API_URL, {
+        title: data.title.trim(),
+        description: data.description.trim(),
+      });
 
       setData(response.data.data);
 
@@ -197,9 +165,16 @@ const RealisationsManagement = () => {
         error
       );
 
-      toast.error(
-        "Erreur lors de l'enregistrement."
-      );
+      if (axios.isAxiosError(error)) {
+        toast.error(
+          error.response?.data?.message ||
+            "Erreur lors de l'enregistrement."
+        );
+      } else {
+        toast.error(
+          "Erreur lors de l'enregistrement."
+        );
+      }
     } finally {
       setSavingSection(false);
       stopLoading();
@@ -213,8 +188,7 @@ const RealisationsManagement = () => {
   const handleImageChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const file =
-      event.target.files?.[0];
+    const file = event.target.files?.[0];
 
     if (!file) return;
 
@@ -230,20 +204,15 @@ const RealisationsManagement = () => {
       );
 
       event.target.value = "";
-
       return;
     }
 
-    if (
-      file.size >
-      10 * 1024 * 1024
-    ) {
+    if (file.size > 10 * 1024 * 1024) {
       toast.error(
         "L'image ne doit pas dépasser 10 MB."
       );
 
       event.target.value = "";
-
       return;
     }
 
@@ -253,9 +222,7 @@ const RealisationsManagement = () => {
       previewImage &&
       previewImage.startsWith("blob:")
     ) {
-      URL.revokeObjectURL(
-        previewImage
-      );
+      URL.revokeObjectURL(previewImage);
     }
 
     setPreviewImage(
@@ -282,44 +249,34 @@ const RealisationsManagement = () => {
       "image/webp",
     ];
 
-    const validFiles = files.filter(
-      (file) => {
-        if (
-          !allowedTypes.includes(
-            file.type
-          )
-        ) {
-          toast.error(
-            `${file.name} : format non autorisé.`
-          );
+    const validFiles = files.filter((file) => {
+      if (!allowedTypes.includes(file.type)) {
+        toast.error(
+          `${file.name} : format non autorisé.`
+        );
 
-          return false;
-        }
-
-        if (
-          file.size >
-          10 * 1024 * 1024
-        ) {
-          toast.error(
-            `${file.name} dépasse 10 MB.`
-          );
-
-          return false;
-        }
-
-        return true;
+        return false;
       }
-    );
+
+      if (file.size > 10 * 1024 * 1024) {
+        toast.error(
+          `${file.name} dépasse 10 MB.`
+        );
+
+        return false;
+      }
+
+      return true;
+    });
 
     if (!validFiles.length) {
       event.target.value = "";
       return;
     }
 
-    const previews =
-      validFiles.map((file) =>
-        URL.createObjectURL(file)
-      );
+    const previews = validFiles.map((file) =>
+      URL.createObjectURL(file)
+    );
 
     setGalleryFiles((prev) => [
       ...prev,
@@ -338,26 +295,19 @@ const RealisationsManagement = () => {
      REMOVE NEW GALLERY IMAGE
   ================================================================ */
 
-  const removeGalleryFile = (
-    index: number
-  ) => {
-    const preview =
-      galleryPreviews[index];
+  const removeGalleryFile = (index: number) => {
+    const preview = galleryPreviews[index];
 
     if (preview) {
       URL.revokeObjectURL(preview);
     }
 
     setGalleryFiles((prev) =>
-      prev.filter(
-        (_, i) => i !== index
-      )
+      prev.filter((_, i) => i !== index)
     );
 
     setGalleryPreviews((prev) =>
-      prev.filter(
-        (_, i) => i !== index
-      )
+      prev.filter((_, i) => i !== index)
     );
   };
 
@@ -365,78 +315,67 @@ const RealisationsManagement = () => {
      DELETE EXISTING GALLERY IMAGE
   ================================================================ */
 
-  const handleDeleteGalleryImage =
-    async (
-      projectId: string,
-      imageId: string
-    ) => {
-      const confirmed =
-        window.confirm(
-          "Voulez-vous vraiment supprimer cette image ?"
-        );
+  const handleDeleteGalleryImage = async (
+    projectId: string,
+    imageId: string
+  ) => {
+    const confirmed = window.confirm(
+      "Voulez-vous vraiment supprimer cette image ?"
+    );
 
-      if (!confirmed) return;
+    if (!confirmed) return;
 
-      try {
-        setDeletingGalleryImage(
-          imageId
-        );
+    try {
+      setDeletingGalleryImage(imageId);
+      startLoading();
 
-        startLoading();
+      const response = await axiosInstance.delete(
+        `${API_URL}/projects/${projectId}/gallery/${imageId}`
+      );
 
-        const response =
-          await axios.delete(
-            `${API_URL}/projects/${projectId}/gallery/${imageId}`
+      const updatedData = response.data.data;
+
+      setData(updatedData);
+
+      if (
+        editingProject?._id === projectId
+      ) {
+        const updatedProject =
+          updatedData.projects.find(
+            (project: Project) =>
+              project._id === projectId
           );
 
-        setData(response.data.data);
-
-        /*
-         * Mettre à jour le projet
-         * actuellement édité.
-         */
-
-        if (
-          editingProject?._id ===
-          projectId
-        ) {
-          const updatedProject =
-            response.data.data.projects.find(
-              (project: Project) =>
-                project._id ===
-                projectId
-            );
-
-          if (updatedProject) {
-            setEditingProject(
-              updatedProject
-            );
-          }
+        if (updatedProject) {
+          setEditingProject(updatedProject);
         }
+      }
 
-        toast.success(
-          "Image supprimée."
-        );
-      } catch (error) {
-        console.error(
-          "Erreur suppression image:",
-          error
-        );
+      toast.success("Image supprimée.");
+    } catch (error) {
+      console.error(
+        "Erreur suppression image:",
+        error
+      );
 
+      if (axios.isAxiosError(error)) {
+        toast.error(
+          error.response?.data?.message ||
+            "Impossible de supprimer l'image."
+        );
+      } else {
         toast.error(
           "Impossible de supprimer l'image."
         );
-      } finally {
-        setDeletingGalleryImage(
-          null
-        );
-
-        stopLoading();
       }
-    };
+    } finally {
+      setDeletingGalleryImage(null);
+      stopLoading();
+    }
+  };
 
   /* ================================================================
-     RESET
+     RESET FORM
   ================================================================ */
 
   const resetForm = () => {
@@ -444,22 +383,14 @@ const RealisationsManagement = () => {
       previewImage &&
       previewImage.startsWith("blob:")
     ) {
-      URL.revokeObjectURL(
-        previewImage
-      );
+      URL.revokeObjectURL(previewImage);
     }
 
-    galleryPreviews.forEach(
-      (preview) => {
-        if (
-          preview.startsWith("blob:")
-        ) {
-          URL.revokeObjectURL(
-            preview
-          );
-        }
+    galleryPreviews.forEach((preview) => {
+      if (preview.startsWith("blob:")) {
+        URL.revokeObjectURL(preview);
       }
-    );
+    });
 
     setProjectTitle("");
     setProjectCategory("");
@@ -483,194 +414,170 @@ const RealisationsManagement = () => {
      ADD PROJECT
   ================================================================ */
 
-  const handleAddProject =
-    async () => {
-      if (!projectTitle.trim()) {
-        toast.error(
-          "Veuillez saisir le nom du projet."
+  const handleAddProject = async () => {
+    if (!projectTitle.trim()) {
+      toast.error(
+        "Veuillez saisir le nom du projet."
+      );
+      return;
+    }
+
+    if (!projectCategory.trim()) {
+      toast.error(
+        "Veuillez saisir la catégorie."
+      );
+      return;
+    }
+
+    if (!projectImage) {
+      toast.error(
+        "Veuillez sélectionner une image principale."
+      );
+      return;
+    }
+
+    try {
+      setSavingProject(true);
+      startLoading();
+
+      const formData = new FormData();
+
+      formData.append(
+        "title",
+        projectTitle.trim()
+      );
+
+      formData.append(
+        "category",
+        projectCategory.trim()
+      );
+
+      formData.append(
+        "description",
+        projectDescription.trim()
+      );
+
+      formData.append(
+        "client",
+        projectClient.trim()
+      );
+
+      formData.append(
+        "year",
+        projectYear.trim()
+      );
+
+      formData.append(
+        "projectUrl",
+        projectUrl.trim()
+      );
+
+      const services = projectServices
+        .split(",")
+        .map((item) => item.trim())
+        .filter(Boolean);
+
+      formData.append(
+        "services",
+        JSON.stringify(services)
+      );
+
+      formData.append(
+        "image",
+        projectImage
+      );
+
+      const response =
+        await axiosInstance.post(
+          `${API_URL}/projects`,
+          formData
         );
-        return;
-      }
 
-      if (!projectCategory.trim()) {
-        toast.error(
-          "Veuillez saisir la catégorie."
-        );
-        return;
-      }
+      let updatedData = response.data.data;
 
-      if (!projectImage) {
-        toast.error(
-          "Veuillez sélectionner une image principale."
-        );
-        return;
-      }
+      /*
+       * Ajouter les images de galerie
+       */
 
-      try {
-        setSavingProject(true);
-        startLoading();
+      const createdProject =
+        updatedData.projects[
+          updatedData.projects.length - 1
+        ];
 
-        const formData =
+      if (
+        createdProject &&
+        galleryFiles.length > 0
+      ) {
+        const galleryFormData =
           new FormData();
 
-        formData.append(
-          "title",
-          projectTitle.trim()
-        );
+        galleryFiles.forEach((file) => {
+          galleryFormData.append(
+            "images",
+            file
+          );
+        });
 
-        formData.append(
-          "category",
-          projectCategory.trim()
-        );
-
-        formData.append(
-          "description",
-          projectDescription.trim()
-        );
-
-        formData.append(
-          "client",
-          projectClient.trim()
-        );
-
-        formData.append(
-          "year",
-          projectYear.trim()
-        );
-
-        formData.append(
-          "projectUrl",
-          projectUrl.trim()
-        );
-
-        const services =
-          projectServices
-            .split(",")
-            .map((item) =>
-              item.trim()
-            )
-            .filter(Boolean);
-
-        formData.append(
-          "services",
-          JSON.stringify(services)
-        );
-
-        formData.append(
-          "image",
-          projectImage
-        );
-
-        const response =
-          await axios.post(
-            `${API_URL}/projects`,
-            formData
+        const galleryResponse =
+          await axiosInstance.post(
+            `${API_URL}/projects/${createdProject._id}/gallery`,
+            galleryFormData
           );
 
-        let updatedData =
-          response.data.data;
-
-        /*
-         * Ajouter les images de galerie
-         */
-
-        const createdProject =
-          updatedData.projects[
-            updatedData.projects.length -
-              1
-          ];
-
-        if (
-          galleryFiles.length > 0
-        ) {
-          const galleryFormData =
-            new FormData();
-
-          galleryFiles.forEach(
-            (file) => {
-              galleryFormData.append(
-                "images",
-                file
-              );
-            }
-          );
-
-          const galleryResponse =
-            await axios.post(
-              `${API_URL}/projects/${createdProject._id}/gallery`,
-              galleryFormData
-            );
-
-          updatedData =
-            galleryResponse.data.data;
-        }
-
-        setData(updatedData);
-
-        resetForm();
-
-        toast.success(
-          "Projet ajouté avec succès."
-        );
-      } catch (error) {
-        console.error(
-          "Erreur ajout projet:",
-          error
-        );
-
-        if (
-          axios.isAxiosError(error)
-        ) {
-          toast.error(
-            error.response?.data
-              ?.message ||
-              "Erreur lors de l'ajout du projet."
-          );
-        } else {
-          toast.error(
-            "Erreur lors de l'ajout du projet."
-          );
-        }
-      } finally {
-        setSavingProject(false);
-        stopLoading();
+        updatedData =
+          galleryResponse.data.data;
       }
-    };
+
+      setData(updatedData);
+
+      resetForm();
+
+      toast.success(
+        "Projet ajouté avec succès."
+      );
+    } catch (error) {
+      console.error(
+        "Erreur ajout projet:",
+        error
+      );
+
+      if (axios.isAxiosError(error)) {
+        toast.error(
+          error.response?.data?.message ||
+            "Erreur lors de l'ajout du projet."
+        );
+      } else {
+        toast.error(
+          "Erreur lors de l'ajout du projet."
+        );
+      }
+    } finally {
+      setSavingProject(false);
+      stopLoading();
+    }
+  };
 
   /* ================================================================
      START EDIT
   ================================================================ */
 
-  const handleEdit = (
-    project: Project
-  ) => {
+  const handleEdit = (project: Project) => {
     setEditingProject(project);
 
-    setProjectTitle(
-      project.title
-    );
-
-    setProjectCategory(
-      project.category
-    );
-
+    setProjectTitle(project.title);
+    setProjectCategory(project.category);
     setProjectDescription(
       project.description || ""
     );
-
     setProjectClient(
       project.client || ""
     );
-
     setProjectYear(
       project.year || ""
     );
-
     setProjectServices(
-      project.services?.join(", ") ||
-        ""
+      project.services?.join(", ") || ""
     );
-
     setProjectUrl(
       project.projectUrl || ""
     );
@@ -678,7 +585,7 @@ const RealisationsManagement = () => {
     setProjectImage(null);
 
     setPreviewImage(
-      project.image.url
+      project.image?.url || null
     );
 
     setGalleryFiles([]);
@@ -718,8 +625,7 @@ const RealisationsManagement = () => {
         setSavingProject(true);
         startLoading();
 
-        const formData =
-          new FormData();
+        const formData = new FormData();
 
         formData.append(
           "title",
@@ -751,13 +657,10 @@ const RealisationsManagement = () => {
           projectUrl.trim()
         );
 
-        const services =
-          projectServices
-            .split(",")
-            .map((item) =>
-              item.trim()
-            )
-            .filter(Boolean);
+        const services = projectServices
+          .split(",")
+          .map((item) => item.trim())
+          .filter(Boolean);
 
         formData.append(
           "services",
@@ -772,7 +675,7 @@ const RealisationsManagement = () => {
         }
 
         let response =
-          await axios.put(
+          await axiosInstance.put(
             `${API_URL}/projects/${editingProject._id}`,
             formData
           );
@@ -785,23 +688,19 @@ const RealisationsManagement = () => {
          * de galerie
          */
 
-        if (
-          galleryFiles.length > 0
-        ) {
+        if (galleryFiles.length > 0) {
           const galleryFormData =
             new FormData();
 
-          galleryFiles.forEach(
-            (file) => {
-              galleryFormData.append(
-                "images",
-                file
-              );
-            }
-          );
+          galleryFiles.forEach((file) => {
+            galleryFormData.append(
+              "images",
+              file
+            );
+          });
 
           response =
-            await axios.post(
+            await axiosInstance.post(
               `${API_URL}/projects/${editingProject._id}/gallery`,
               galleryFormData
             );
@@ -823,12 +722,9 @@ const RealisationsManagement = () => {
           error
         );
 
-        if (
-          axios.isAxiosError(error)
-        ) {
+        if (axios.isAxiosError(error)) {
           toast.error(
-            error.response?.data
-              ?.message ||
+            error.response?.data?.message ||
               "Erreur lors de la modification."
           );
         } else {
@@ -846,65 +742,56 @@ const RealisationsManagement = () => {
      DELETE PROJECT
   ================================================================ */
 
-  const handleDeleteProject =
-    async (
-      projectId: string
-    ) => {
-      const confirmed =
-        window.confirm(
-          "Voulez-vous vraiment supprimer ce projet ?"
+  const handleDeleteProject = async (
+    projectId: string
+  ) => {
+    const confirmed = window.confirm(
+      "Voulez-vous vraiment supprimer ce projet ?"
+    );
+
+    if (!confirmed) return;
+
+    try {
+      setDeletingProject(projectId);
+      startLoading();
+
+      const response =
+        await axiosInstance.delete(
+          `${API_URL}/projects/${projectId}`
         );
 
-      if (!confirmed) return;
+      setData(response.data.data);
 
-      try {
-        setDeletingProject(
-          projectId
-        );
-
-        startLoading();
-
-        const response =
-          await axios.delete(
-            `${API_URL}/projects/${projectId}`
-          );
-
-        setData(response.data.data);
-
-        if (
-          editingProject?._id ===
-          projectId
-        ) {
-          resetForm();
-        }
-
-        toast.success(
-          "Projet supprimé avec succès."
-        );
-      } catch (error) {
-        console.error(
-          "Erreur suppression projet:",
-          error
-        );
-
-        if (
-          axios.isAxiosError(error)
-        ) {
-          toast.error(
-            error.response?.data
-              ?.message ||
-              "Erreur lors de la suppression."
-          );
-        } else {
-          toast.error(
-            "Erreur lors de la suppression."
-          );
-        }
-      } finally {
-        setDeletingProject(null);
-        stopLoading();
+      if (
+        editingProject?._id === projectId
+      ) {
+        resetForm();
       }
-    };
+
+      toast.success(
+        "Projet supprimé avec succès."
+      );
+    } catch (error) {
+      console.error(
+        "Erreur suppression projet:",
+        error
+      );
+
+      if (axios.isAxiosError(error)) {
+        toast.error(
+          error.response?.data?.message ||
+            "Erreur lors de la suppression."
+        );
+      } else {
+        toast.error(
+          "Erreur lors de la suppression."
+        );
+      }
+    } finally {
+      setDeletingProject(null);
+      stopLoading();
+    }
+  };
 
   /* ================================================================
      REORDER
@@ -912,15 +799,13 @@ const RealisationsManagement = () => {
 
   const moveProject = async (
     index: number,
-    direction:
-      | "up"
-      | "down"
+    direction: "up" | "down"
   ) => {
     if (!data) return;
 
-    const projects = [
-      ...data.projects,
-    ];
+    const projects = [...data.projects].sort(
+      (a, b) => a.order - b.order
+    );
 
     const newIndex =
       direction === "up"
@@ -943,23 +828,20 @@ const RealisationsManagement = () => {
     ];
 
     const orderedProjects =
-      projects.map(
-        (project, i) => ({
-          ...project,
-          order: i,
-        })
-      );
+      projects.map((project, i) => ({
+        ...project,
+        order: i,
+      }));
 
     setData({
       ...data,
-      projects:
-        orderedProjects,
+      projects: orderedProjects,
     });
 
     try {
       startLoading();
 
-      await axios.put(
+      await axiosInstance.put(
         `${API_URL}/projects/reorder`,
         {
           projects:
@@ -1006,9 +888,7 @@ const RealisationsManagement = () => {
 
           <button
             type="button"
-            onClick={
-              fetchRealisations
-            }
+            onClick={fetchRealisations}
             className="mt-4 rounded-lg bg-[#2464cc] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#1d55b0]"
           >
             Réessayer
@@ -1026,12 +906,19 @@ const RealisationsManagement = () => {
     "w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm outline-none focus:border-[#2464cc] dark:border-gray-700 dark:bg-gray-800 dark:text-white";
 
   /* ================================================================
+     SORTED PROJECTS
+  ================================================================ */
+
+  const sortedProjects = [...data.projects].sort(
+    (a, b) => a.order - b.order
+  );
+
+  /* ================================================================
      RENDER
   ================================================================ */
 
   return (
     <div className="space-y-6 p-6">
-
       {/* HEADER */}
 
       <div>
@@ -1048,9 +935,7 @@ const RealisationsManagement = () => {
       {/* SECTION CONTENT */}
 
       <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
-
         <div className="mb-6 flex items-center justify-between">
-
           <div>
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
               Contenu de la section
@@ -1064,9 +949,7 @@ const RealisationsManagement = () => {
 
           <button
             type="button"
-            onClick={
-              handleSaveSection
-            }
+            onClick={handleSaveSection}
             disabled={savingSection}
             className="inline-flex items-center gap-2 rounded-lg bg-[#2464cc] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[#1d55b0] disabled:cursor-not-allowed disabled:opacity-50"
           >
@@ -1083,11 +966,9 @@ const RealisationsManagement = () => {
               ? "Enregistrement..."
               : "Enregistrer"}
           </button>
-
         </div>
 
         <div className="space-y-5">
-
           <div>
             <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
               Grand titre
@@ -1099,8 +980,7 @@ const RealisationsManagement = () => {
               onChange={(e) =>
                 setData({
                   ...data,
-                  title:
-                    e.target.value,
+                  title: e.target.value,
                 })
               }
               className={inputClass}
@@ -1115,34 +995,26 @@ const RealisationsManagement = () => {
 
             <textarea
               rows={4}
-              value={
-                data.description
-              }
+              value={data.description}
               onChange={(e) =>
                 setData({
                   ...data,
-                  description:
-                    e.target.value,
+                  description: e.target.value,
                 })
               }
               className={`${inputClass} resize-none`}
               placeholder="Description de la section..."
             />
           </div>
-
         </div>
       </div>
 
-      {/* ============================================================
-          ADD / EDIT PROJECT
-      ============================================================ */}
+      {/* ADD / EDIT PROJECT */}
 
       {(showAddProject ||
         editingProject) && (
         <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
-
           <div className="mb-6 flex items-center justify-between">
-
             <div>
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
                 {editingProject
@@ -1158,18 +1030,14 @@ const RealisationsManagement = () => {
 
             <button
               type="button"
-              onClick={
-                resetForm
-              }
+              onClick={resetForm}
               className="rounded-lg p-2 text-gray-500 transition hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-white"
             >
               <X size={20} />
             </button>
-
           </div>
 
           <div className="grid gap-6 lg:grid-cols-2">
-
             {/* IMAGE PRINCIPALE */}
 
             <div>
@@ -1178,18 +1046,14 @@ const RealisationsManagement = () => {
               </label>
 
               <label className="group relative flex min-h-[260px] cursor-pointer items-center justify-center overflow-hidden rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 dark:border-gray-700 dark:bg-gray-800">
-
                 {previewImage ? (
                   <img
-                    src={
-                      previewImage
-                    }
+                    src={previewImage}
                     alt="Preview"
                     className="absolute inset-0 h-full w-full object-cover"
                   />
                 ) : (
                   <div className="text-center">
-
                     <Upload
                       size={30}
                       className="mx-auto mb-3 text-gray-400"
@@ -1203,16 +1067,13 @@ const RealisationsManagement = () => {
                     <p className="mt-1 text-xs text-gray-400">
                       JPG, PNG ou WEBP
                     </p>
-
                   </div>
                 )}
 
                 <input
                   type="file"
                   accept="image/png,image/jpeg,image/webp"
-                  onChange={
-                    handleImageChange
-                  }
+                  onChange={handleImageChange}
                   className="hidden"
                 />
 
@@ -1222,14 +1083,12 @@ const RealisationsManagement = () => {
                     l'image
                   </div>
                 )}
-
               </label>
             </div>
 
             {/* INFORMATIONS */}
 
             <div className="space-y-5">
-
               {/* TITLE */}
 
               <div>
@@ -1239,17 +1098,13 @@ const RealisationsManagement = () => {
 
                 <input
                   type="text"
-                  value={
-                    projectTitle
-                  }
+                  value={projectTitle}
                   onChange={(e) =>
                     setProjectTitle(
                       e.target.value
                     )
                   }
-                  className={
-                    inputClass
-                  }
+                  className={inputClass}
                   placeholder="Mirasa Association"
                 />
               </div>
@@ -1263,17 +1118,13 @@ const RealisationsManagement = () => {
 
                 <input
                   type="text"
-                  value={
-                    projectCategory
-                  }
+                  value={projectCategory}
                   onChange={(e) =>
                     setProjectCategory(
                       e.target.value
                     )
                   }
-                  className={
-                    inputClass
-                  }
+                  className={inputClass}
                   placeholder="Web Design • Development"
                 />
               </div>
@@ -1287,17 +1138,13 @@ const RealisationsManagement = () => {
 
                 <input
                   type="text"
-                  value={
-                    projectClient
-                  }
+                  value={projectClient}
                   onChange={(e) =>
                     setProjectClient(
                       e.target.value
                     )
                   }
-                  className={
-                    inputClass
-                  }
+                  className={inputClass}
                   placeholder="Mirasa Association"
                 />
               </div>
@@ -1311,17 +1158,13 @@ const RealisationsManagement = () => {
 
                 <input
                   type="text"
-                  value={
-                    projectYear
-                  }
+                  value={projectYear}
                   onChange={(e) =>
                     setProjectYear(
                       e.target.value
                     )
                   }
-                  className={
-                    inputClass
-                  }
+                  className={inputClass}
                   placeholder="2026"
                 />
               </div>
@@ -1335,17 +1178,13 @@ const RealisationsManagement = () => {
 
                 <input
                   type="text"
-                  value={
-                    projectServices
-                  }
+                  value={projectServices}
                   onChange={(e) =>
                     setProjectServices(
                       e.target.value
                     )
                   }
-                  className={
-                    inputClass
-                  }
+                  className={inputClass}
                   placeholder="Branding, UI Design, React, Node.js"
                 />
 
@@ -1364,38 +1203,29 @@ const RealisationsManagement = () => {
 
                 <input
                   type="url"
-                  value={
-                    projectUrl
-                  }
+                  value={projectUrl}
                   onChange={(e) =>
                     setProjectUrl(
                       e.target.value
                     )
                   }
-                  className={
-                    inputClass
-                  }
+                  className={inputClass}
                   placeholder="https://..."
                 />
               </div>
-
             </div>
-
           </div>
 
           {/* DESCRIPTION */}
 
           <div className="mt-6">
-
             <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
               Description détaillée
             </label>
 
             <textarea
               rows={7}
-              value={
-                projectDescription
-              }
+              value={projectDescription}
               onChange={(e) =>
                 setProjectDescription(
                   e.target.value
@@ -1404,17 +1234,12 @@ const RealisationsManagement = () => {
               className={`${inputClass} resize-none`}
               placeholder="Décrivez le projet, le contexte, les objectifs et les réalisations..."
             />
-
           </div>
 
-          {/* ========================================================
-              GALLERY
-          ======================================================== */}
+          {/* GALLERY */}
 
           <div className="mt-6">
-
             <div className="mb-3 flex items-center justify-between">
-
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Galerie du projet
@@ -1427,7 +1252,6 @@ const RealisationsManagement = () => {
               </div>
 
               <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800">
-
                 <Plus size={16} />
 
                 Ajouter des images
@@ -1441,76 +1265,68 @@ const RealisationsManagement = () => {
                   }
                   className="hidden"
                 />
-
               </label>
-
             </div>
 
             {/* EXISTING IMAGES */}
 
             {editingProject &&
-              editingProject.gallery
-                ?.length > 0 && (
+              editingProject.gallery?.length >
+                0 && (
                 <div className="mb-5 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
-
                   {editingProject.gallery.map(
                     (image) => (
                       <div
                         key={
-                          image._id
+                          image._id ||
+                          image.url
                         }
                         className="group relative aspect-square overflow-hidden rounded-xl border border-gray-200 dark:border-gray-800"
                       >
-
                         <img
-                          src={
-                            image.url
-                          }
+                          src={image.url}
                           alt="Galerie"
                           className="h-full w-full object-cover"
                         />
 
-                        <button
-                          type="button"
-                          onClick={() =>
-                            image._id &&
-                            handleDeleteGalleryImage(
-                              editingProject._id,
+                        {image._id && (
+                          <button
+                            type="button"
+                            onClick={() =>
+                              handleDeleteGalleryImage(
+                                editingProject._id,
+                                image._id!
+                              )
+                            }
+                            disabled={
+                              deletingGalleryImage ===
                               image._id
-                            )
-                          }
-                          disabled={
-                            deletingGalleryImage ===
-                            image._id
-                          }
-                          className="absolute right-2 top-2 rounded-lg bg-red-600 p-2 text-white opacity-0 transition group-hover:opacity-100 disabled:opacity-50"
-                        >
-                          {deletingGalleryImage ===
-                          image._id ? (
-                            <Loader2
-                              size={16}
-                              className="animate-spin"
-                            />
-                          ) : (
-                            <Trash2
-                              size={16}
-                            />
-                          )}
-                        </button>
-
+                            }
+                            className="absolute right-2 top-2 rounded-lg bg-red-600 p-2 text-white opacity-0 transition group-hover:opacity-100 disabled:opacity-50"
+                          >
+                            {deletingGalleryImage ===
+                            image._id ? (
+                              <Loader2
+                                size={16}
+                                className="animate-spin"
+                              />
+                            ) : (
+                              <Trash2
+                                size={16}
+                              />
+                            )}
+                          </button>
+                        )}
                       </div>
                     )
                   )}
-
                 </div>
               )}
 
             {/* NEW IMAGES */}
 
-            {galleryPreviews.length >
-              0 && (
+            {galleryPreviews.length > 0 && (
               <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
-
                 {galleryPreviews.map(
                   (
                     preview,
@@ -1520,11 +1336,8 @@ const RealisationsManagement = () => {
                       key={preview}
                       className="group relative aspect-square overflow-hidden rounded-xl border border-[#2464cc]"
                     >
-
                       <img
-                        src={
-                          preview
-                        }
+                        src={preview}
                         alt="Nouvelle image"
                         className="h-full w-full object-cover"
                       />
@@ -1542,20 +1355,16 @@ const RealisationsManagement = () => {
                           size={16}
                         />
                       </button>
-
                     </div>
                   )
                 )}
-
               </div>
             )}
-
           </div>
 
           {/* BUTTONS */}
 
           <div className="mt-6 flex gap-3">
-
             <button
               type="button"
               onClick={
@@ -1563,12 +1372,9 @@ const RealisationsManagement = () => {
                   ? handleUpdateProject
                   : handleAddProject
               }
-              disabled={
-                savingProject
-              }
+              disabled={savingProject}
               className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-[#2464cc] px-5 py-3 text-sm font-medium text-white transition hover:bg-[#1d55b0] disabled:cursor-not-allowed disabled:opacity-50"
             >
-
               {savingProject ? (
                 <Loader2
                   size={17}
@@ -1583,35 +1389,24 @@ const RealisationsManagement = () => {
                 : editingProject
                 ? "Enregistrer les modifications"
                 : "Ajouter le projet"}
-
             </button>
 
             <button
               type="button"
-              onClick={
-                resetForm
-              }
-              disabled={
-                savingProject
-              }
+              onClick={resetForm}
+              disabled={savingProject}
               className="rounded-lg border border-gray-300 px-5 py-3 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:opacity-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
             >
               Annuler
             </button>
-
           </div>
-
         </div>
       )}
 
-      {/* ============================================================
-          PROJECTS LIST
-      ============================================================ */}
+      {/* PROJECTS LIST */}
 
       <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
-
         <div className="mb-6 flex items-center justify-between">
-
           <div>
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
               Projets
@@ -1619,8 +1414,7 @@ const RealisationsManagement = () => {
 
             <p className="text-sm text-gray-500">
               {data.projects.length} projet
-              {data.projects.length >
-              1
+              {data.projects.length > 1
                 ? "s"
                 : ""}
             </p>
@@ -1631,23 +1425,19 @@ const RealisationsManagement = () => {
               <button
                 type="button"
                 onClick={() =>
-                  setShowAddProject(
-                    true
-                  )
+                  setShowAddProject(true)
                 }
                 className="inline-flex items-center gap-2 rounded-lg bg-[#2464cc] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[#1d55b0]"
               >
                 <Plus size={18} />
+
                 Ajouter
               </button>
             )}
-
         </div>
 
-        {data.projects.length ===
-        0 ? (
+        {sortedProjects.length === 0 ? (
           <div className="rounded-xl border border-dashed border-gray-300 py-16 text-center dark:border-gray-700">
-
             <p className="text-sm text-gray-500">
               Aucun projet pour le
               moment.
@@ -1656,210 +1446,157 @@ const RealisationsManagement = () => {
             <button
               type="button"
               onClick={() =>
-                setShowAddProject(
-                  true
-                )
+                setShowAddProject(true)
               }
               className="mt-4 inline-flex items-center gap-2 rounded-lg bg-[#2464cc] px-4 py-2 text-sm font-medium text-white"
             >
               <Plus size={17} />
+
               Ajouter le premier
               projet
             </button>
-
           </div>
         ) : (
           <div className="space-y-4">
+            {sortedProjects.map(
+              (project, index) => (
+                <div
+                  key={project._id}
+                  className="flex flex-col gap-4 rounded-xl border border-gray-200 p-4 dark:border-gray-800 sm:flex-row sm:items-center"
+                >
+                  {/* DRAG */}
 
-            {data.projects
-              .sort(
-                (a, b) =>
-                  a.order -
-                  b.order
-              )
-              .map(
-                (
-                  project,
-                  index
-                ) => (
-
-                  <div
-                    key={
-                      project._id
-                    }
-                    className="flex flex-col gap-4 rounded-xl border border-gray-200 p-4 dark:border-gray-800 sm:flex-row sm:items-center"
-                  >
-
-                    {/* DRAG */}
-
-                    <div className="hidden text-gray-400 sm:block">
-                      <GripVertical
-                        size={20}
-                      />
-                    </div>
-
-                    {/* IMAGE */}
-
-                    <img
-                      src={
-                        project.image
-                          .url
-                      }
-                      alt={
-                        project.title
-                      }
-                      className="h-24 w-full rounded-lg object-cover sm:h-20 sm:w-32"
+                  <div className="hidden text-gray-400 sm:block">
+                    <GripVertical
+                      size={20}
                     />
-
-                    {/* CONTENT */}
-
-                    <div className="min-w-0 flex-1">
-
-                      <h3 className="truncate font-medium text-gray-900 dark:text-white">
-                        {
-                          project.title
-                        }
-                      </h3>
-
-                      <p className="mt-1 text-sm text-[#2464cc]">
-                        {
-                          project.category
-                        }
-                      </p>
-
-                      <p className="mt-1 text-xs text-gray-400">
-                        {
-                          project.gallery
-                            ?.length ||
-                          0
-                        }{" "}
-                        image
-                        {(
-                          project
-                            .gallery
-                            ?.length ||
-                          0
-                        ) >
-                        1
-                          ? "s"
-                          : ""}{" "}
-                        galerie
-                      </p>
-
-                    </div>
-
-                    {/* ORDER */}
-
-                    <div className="flex items-center gap-1">
-
-                      <button
-                        type="button"
-                        disabled={
-                          index ===
-                          0
-                        }
-                        onClick={() =>
-                          moveProject(
-                            index,
-                            "up"
-                          )
-                        }
-                        className="rounded-lg border border-gray-200 px-2.5 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-30 dark:border-gray-700"
-                      >
-                        ↑
-                      </button>
-
-                      <button
-                        type="button"
-                        disabled={
-                          index ===
-                          data
-                            .projects
-                            .length -
-                            1
-                        }
-                        onClick={() =>
-                          moveProject(
-                            index,
-                            "down"
-                          )
-                        }
-                        className="rounded-lg border border-gray-200 px-2.5 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-30 dark:border-gray-700"
-                      >
-                        ↓
-                      </button>
-
-                    </div>
-
-                    {/* ACTIONS */}
-
-                    <div className="flex items-center gap-2">
-
-                      <button
-                        type="button"
-                        onClick={() =>
-                          handleEdit(
-                            project
-                          )
-                        }
-                        className="inline-flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
-                      >
-                        <Pencil
-                          size={16}
-                        />
-
-                        <span className="hidden md:inline">
-                          Modifier
-                        </span>
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() =>
-                          handleDeleteProject(
-                            project._id
-                          )
-                        }
-                        disabled={
-                          deletingProject ===
-                          project._id
-                        }
-                        className="inline-flex items-center gap-2 rounded-lg border border-red-200 px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50 disabled:opacity-50 dark:border-red-900/40 dark:hover:bg-red-950/20"
-                      >
-
-                        {deletingProject ===
-                        project._id ? (
-                          <Loader2
-                            size={16}
-                            className="animate-spin"
-                          />
-                        ) : (
-                          <Trash2
-                            size={16}
-                          />
-                        )}
-
-                        <span className="hidden md:inline">
-                          {deletingProject ===
-                          project._id
-                            ? "Suppression..."
-                            : "Supprimer"}
-                        </span>
-
-                      </button>
-
-                    </div>
-
                   </div>
 
-                )
-              )}
+                  {/* IMAGE */}
 
+                  <img
+                    src={project.image?.url}
+                    alt={project.title}
+                    className="h-24 w-full rounded-lg object-cover sm:h-20 sm:w-32"
+                  />
+
+                  {/* CONTENT */}
+
+                  <div className="min-w-0 flex-1">
+                    <h3 className="truncate font-medium text-gray-900 dark:text-white">
+                      {project.title}
+                    </h3>
+
+                    <p className="mt-1 text-sm text-[#2464cc]">
+                      {project.category}
+                    </p>
+
+                    <p className="mt-1 text-xs text-gray-400">
+                      {project.gallery
+                        ?.length || 0}{" "}
+                      image
+                      {(project.gallery
+                        ?.length || 0) > 1
+                        ? "s"
+                        : ""}{" "}
+                      galerie
+                    </p>
+                  </div>
+
+                  {/* ORDER */}
+
+                  <div className="flex items-center gap-1">
+                    <button
+                      type="button"
+                      disabled={index === 0}
+                      onClick={() =>
+                        moveProject(
+                          index,
+                          "up"
+                        )
+                      }
+                      className="rounded-lg border border-gray-200 px-2.5 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-30 dark:border-gray-700"
+                    >
+                      ↑
+                    </button>
+
+                    <button
+                      type="button"
+                      disabled={
+                        index ===
+                        sortedProjects.length -
+                          1
+                      }
+                      onClick={() =>
+                        moveProject(
+                          index,
+                          "down"
+                        )
+                      }
+                      className="rounded-lg border border-gray-200 px-2.5 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-30 dark:border-gray-700"
+                    >
+                      ↓
+                    </button>
+                  </div>
+
+                  {/* ACTIONS */}
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        handleEdit(project)
+                      }
+                      className="inline-flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+                    >
+                      <Pencil
+                        size={16}
+                      />
+
+                      <span className="hidden md:inline">
+                        Modifier
+                      </span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        handleDeleteProject(
+                          project._id
+                        )
+                      }
+                      disabled={
+                        deletingProject ===
+                        project._id
+                      }
+                      className="inline-flex items-center gap-2 rounded-lg border border-red-200 px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50 disabled:opacity-50 dark:border-red-900/40 dark:hover:bg-red-950/20"
+                    >
+                      {deletingProject ===
+                      project._id ? (
+                        <Loader2
+                          size={16}
+                          className="animate-spin"
+                        />
+                      ) : (
+                        <Trash2
+                          size={16}
+                        />
+                      )}
+
+                      <span className="hidden md:inline">
+                        {deletingProject ===
+                        project._id
+                          ? "Suppression..."
+                          : "Supprimer"}
+                      </span>
+                    </button>
+                  </div>
+                </div>
+              )
+            )}
           </div>
         )}
-
       </div>
-
     </div>
   );
 };
