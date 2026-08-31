@@ -25,6 +25,8 @@ const allowedOrigins = [
   ADMIN_URL,
   // Production — Cloudflare 
   "https://rafamelantsoa.anicolasrayden.workers.dev",
+  // Admin Cloudflare Pages/Workers 
+  "https://admin.anicolasrayden.workers.dev",
   
 ];
 
