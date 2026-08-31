@@ -58,10 +58,10 @@ const API_URL =
   import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 const REALISATIONS_API =
-  `${API_URL}/api/realisations`;
+  `${API_URL}/realisations`;
 
 const WORK_API =
-  `${API_URL}/api/work`;
+  `${API_URL}/work`;
 
 const Dashboard = () => {
   const [realisations, setRealisations] =
