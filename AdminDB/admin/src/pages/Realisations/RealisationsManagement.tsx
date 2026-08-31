@@ -52,7 +52,7 @@ type RealisationsData = {
 
 // axiosInstance possède déjà la baseURL.
 // Exemple local : http://localhost:5000
-const API_URL = "/api/realisations";
+const API_URL = "/realisations";
 
 /* ================================================================
    COMPONENT
