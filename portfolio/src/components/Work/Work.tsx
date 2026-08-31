@@ -50,11 +50,15 @@ type RealisationsData = {
    API
 ========================================================================== */
 
+const API_URL =
+  import.meta.env.VITE_API_URL ||
+  "http://localhost:5000/api";
+
 const WORK_API_URL =
-  "http://localhost:5000/api/work";
+  `${API_URL}/work`;
 
 const REALISATIONS_API_URL =
-  "http://localhost:5000/api/realisations";
+  `${API_URL}/realisations`;
 
 /* ==========================================================================
    COUNT UP

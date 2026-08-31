@@ -52,7 +52,8 @@ type Project = {
 ========================================================================== */
 
 const API_URL =
-  "http://localhost:5000/api/realisations";
+  import.meta.env.VITE_API_URL ||
+  "http://localhost:5000/api";
 
 /* ==========================================================================
    COMPONENT
@@ -64,7 +65,7 @@ const ProjectDetail = () => {
   const [project, setProject] =
     useState<Project | null>(null);
 
-  const [loading, setLoading] =
+  const [, setLoading] =
     useState(true);
 
   const [error, setError] =

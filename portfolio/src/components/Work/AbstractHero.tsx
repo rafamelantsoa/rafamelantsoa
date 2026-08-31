@@ -1385,37 +1385,8 @@ const AbstractHero: React.FC = () => {
      NAVIGATION
   ======================================================= */
 
-  const nextSlide = () => {
-    if (
-      carouselSlides.length ===
-      0
-    ) {
-      return;
-    }
 
-    setCurrentSlide(
-      (prev) =>
-        (prev + 1) %
-        carouselSlides.length
-    );
-  };
 
-  const previousSlide = () => {
-    if (
-      carouselSlides.length ===
-      0
-    ) {
-      return;
-    }
-
-    setCurrentSlide(
-      (prev) =>
-        (prev -
-          1 +
-          carouselSlides.length) %
-        carouselSlides.length
-    );
-  };
 
   /* =======================================================
      RENDER
