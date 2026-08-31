@@ -47,7 +47,7 @@ const Voirplus = () => {
   useEffect(() => {
     const fetchRealisations = async () => {
       try {
-        const response = await axios.get(API_URL);
+        const response = await axios.get(`${API_URL}/realisations`);
         setData(response.data);
       } catch (error) {
         console.error(
