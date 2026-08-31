@@ -84,9 +84,8 @@ const ProjectDetail = () => {
         setError(false);
 
         const response = await axios.get(
-          API_URL
+          `${API_URL}/realisations`
         );
-
         const projects: Project[] =
           response.data?.projects || [];
 

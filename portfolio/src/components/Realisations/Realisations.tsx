@@ -34,22 +34,46 @@ const Realisations = () => {
   const [data, setData] =
     useState<RealisationsData | null>(null);
 
-  /*
-  |--------------------------------------------------------------------------
-  | GET DATA
-  |--------------------------------------------------------------------------
-  */
+  /**
+   * |--------------------------------------------------------------------------
+   * | GET DATA
+   * |--------------------------------------------------------------------------
+   */
 
   const fetchRealisations = async () => {
     try {
-      const response = await axios.get(API_URL);
+      const url = `${API_URL}/realisations`;
+
+      console.log(
+        "GET REALISATIONS URL:",
+        url
+      );
+
+      const response =
+        await axios.get<RealisationsData>(url);
+
+      console.log(
+        "REALISATIONS DATA:",
+        response.data
+      );
 
       setData(response.data);
     } catch (error) {
-      console.error(
-        "Erreur récupération réalisations:",
-        error
-      );
+      if (axios.isAxiosError(error)) {
+        console.error(
+          "Erreur récupération réalisations:",
+          {
+            url: error.config?.url,
+            status: error.response?.status,
+            data: error.response?.data,
+          }
+        );
+      } else {
+        console.error(
+          "Erreur récupération réalisations:",
+          error
+        );
+      }
     }
   };
 

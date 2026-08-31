@@ -1,6 +1,5 @@
 import axios from "axios";
 
-
 /* =========================================================
    TYPES
 ========================================================= */
@@ -25,20 +24,13 @@ export interface AboutTool {
 
 export interface About {
   _id?: string;
-
   title: string;
-
   expertise: AboutExpertise[];
-
   toolsTitle: string;
-
   tools: AboutTool[];
-
   createdAt?: string;
-
   updatedAt?: string;
 }
-
 
 /* =========================================================
    API BASE URL
@@ -46,21 +38,23 @@ export interface About {
 
 const API_URL =
   import.meta.env.VITE_API_URL ||
-  "http://localhost:5000";
-
+  "http://localhost:5000/api";
 
 /* =========================================================
    GET ABOUT
 ========================================================= */
 
-export const getAbout =
-  async (): Promise<About> => {
-
-    const response =
-      await axios.get<About>(
-        `${API_URL}/api/about`
-      );
+export const getAbout = async (): Promise<About> => {
+  try {
+    const response = await axios.get<About>(
+      `${API_URL}/about`
+    );
 
     return response.data;
-
-  };
+  } catch (error) {
+    console.error("GET ABOUT ERROR:", error);
+    throw new Error(
+      "Impossible de récupérer les informations About."
+    );
+  }
+};

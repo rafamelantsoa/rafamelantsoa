@@ -1,34 +1,46 @@
 import { useEffect, useState } from "react";
+
 import axios from "axios";
+
 import { motion, type PanInfo } from "framer-motion";
+
 import {
   ArrowLeft,
   ArrowRight,
   ArrowUpRight,
 } from "lucide-react";
+
 import { Link } from "react-router-dom";
 
 type Project = {
   _id: string;
+
   title: string;
+
   category: string;
+
   image: {
     url: string;
+
     publicId?: string | null;
   };
+
   order: number;
 };
 
 type RealisationsData = {
   _id: string;
+
   title: string;
+
   description: string;
+
   projects: Project[];
 };
 
 const API_URL =
   import.meta.env.VITE_API_URL ||
-  "http://localhost:5000/api";
+  "http://localhost:5000/api/realisations";
 
 const Voirplus = () => {
   const [data, setData] =
@@ -47,7 +59,8 @@ const Voirplus = () => {
   useEffect(() => {
     const fetchRealisations = async () => {
       try {
-        const response = await axios.get(`${API_URL}/realisations`);
+        const response = await axios.get(API_URL);
+
         setData(response.data);
       } catch (error) {
         console.error(
@@ -69,6 +82,7 @@ const Voirplus = () => {
   }
 
   const projects = data.projects;
+
   const total = projects.length;
 
   /* =========================================================
@@ -112,6 +126,7 @@ const Voirplus = () => {
   const VISIBLE_RANGE = 2;
 
   const DRAG_DISTANCE_THRESHOLD = 80;
+
   const DRAG_VELOCITY_THRESHOLD = 400;
 
   const handleDragEnd = (
@@ -143,11 +158,10 @@ const Voirplus = () => {
     <section className="px-5 sm:px-8 md:px-12 lg:px-16 py-24 overflow-hidden">
       <div className="max-w-7xl mx-auto">
 
-
-
         {/* =====================================================
             TITLE
         ===================================================== */}
+
         <motion.div
           initial={{
             opacity: 0,
@@ -204,7 +218,6 @@ const Voirplus = () => {
           }
           onDragEnd={handleDragEnd}
         >
-
           {projects.map((project, index) => {
             const offset = getOffset(index);
 
@@ -277,7 +290,6 @@ const Voirplus = () => {
                       : "none",
                 }}
               >
-
                 <Link
                   to={`/realisations/${project._id}`}
                   className="group block h-full"
@@ -285,7 +297,13 @@ const Voirplus = () => {
                   onClick={(e) => {
                     if (isDragging) {
                       e.preventDefault();
+                      return;
                     }
+
+                    window.scrollTo({
+                      top: 0,
+                      behavior: "instant",
+                    });
                   }}
                 >
 
@@ -305,7 +323,6 @@ const Voirplus = () => {
                       border-white/10
                       transition-all
                       duration-500
-
                       ${
                         isCenter
                           ? `
@@ -476,9 +493,7 @@ const Voirplus = () => {
                     </div>
 
                   </div>
-
                 </Link>
-
               </motion.div>
             );
           })}
@@ -555,7 +570,6 @@ const Voirplus = () => {
           </button>
 
         </div>
-
       </div>
     </section>
   );
