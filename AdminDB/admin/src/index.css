@@ -1,0 +1,102 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* =========================
+   BASE
+========================= */
+
+html,
+body,
+#root {
+  width: 100%;
+  min-height: 100%;
+}
+
+html {
+  scroll-behavior: auto;
+}
+
+/* =========================
+   THEME TRANSITION
+========================= */
+
+html {
+  transition:
+    background-color 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    color 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+body {
+  transition:
+    background-color 0.6s cubic-bezier(0.65, 0, 0.35, 1),
+    color 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* =========================
+   RESET
+========================= */
+
+* {
+  box-sizing: border-box;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+/* =========================
+   THEME TOKENS
+========================= */
+
+@theme {
+  --color-primary: #2464cc;
+  --color-secondary: #1d1d20;
+  --color-text-muted: #67676f;
+  --color-text-strong: #1d1d20;
+  --color-backgroundColor: #eeeef1;
+
+  --font-sans: "Sora", sans-serif;
+  --font-title: "Sora", sans-serif;
+}
+
+/* =========================
+   UTILITIES
+========================= */
+
+@layer utilities {
+  .font-title {
+    font-family: var(--font-title);
+  }
+
+  .font-sans {
+    font-family: var(--font-sans);
+  }
+}
+
+/* =========================
+   GLOBAL BASE STYLE
+========================= */
+
+body {
+  @apply font-sans text-text-muted bg-white;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior: none;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 18s linear infinite;
+}
