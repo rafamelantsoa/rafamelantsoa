@@ -52,12 +52,16 @@ type WorkData = {
   description: string;
 };
 
+const API_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:5000";
+
 const REALISATIONS_API =
-  "http://localhost:5000/api/realisations";
+  `${API_URL}/api/realisations`;
 
 const WORK_API =
-  "http://localhost:5000/api/work";
+  `${API_URL}/api/work`;
 
+  
 const Dashboard = () => {
   const [realisations, setRealisations] =
     useState<RealisationsData | null>(null);
