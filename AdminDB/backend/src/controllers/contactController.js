@@ -1,5 +1,5 @@
 import Contact from "../models/Contact.js";
-import ContactMessage from "../models/contactMessage.js";
+import ContactMessage from "../models/ContactMessage.js";
 import nodemailer from "nodemailer";
 
 /* =========================================================
