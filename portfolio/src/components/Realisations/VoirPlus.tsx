@@ -1,46 +1,37 @@
 import { useEffect, useState } from "react";
-
 import axios from "axios";
-
 import { motion, type PanInfo } from "framer-motion";
-
 import {
   ArrowLeft,
   ArrowRight,
   ArrowUpRight,
 } from "lucide-react";
-
 import { Link } from "react-router-dom";
 
 type Project = {
   _id: string;
-
   title: string;
-
   category: string;
-
   image: {
     url: string;
-
     publicId?: string | null;
   };
-
   order: number;
 };
 
 type RealisationsData = {
   _id: string;
-
   title: string;
-
   description: string;
-
   projects: Project[];
 };
 
 const API_URL =
   import.meta.env.VITE_API_URL ||
-  "http://localhost:5000/api/realisations";
+  "http://localhost:5000/api";
+
+const REALISATIONS_API =
+  `${API_URL}/realisations`;
 
 const Voirplus = () => {
   const [data, setData] =
@@ -52,34 +43,52 @@ const Voirplus = () => {
   const [isDragging, setIsDragging] =
     useState(false);
 
-  /* =========================================================
-     GET DATA
-  ========================================================= */
-
   useEffect(() => {
     const fetchRealisations = async () => {
       try {
-        const response = await axios.get(API_URL);
+        console.log(
+          "GET VOIR PLUS:",
+          REALISATIONS_API
+        );
+
+        const response =
+          await axios.get<RealisationsData>(
+            REALISATIONS_API
+          );
+
+        console.log(
+          "VOIR PLUS DATA:",
+          response.data
+        );
 
         setData(response.data);
       } catch (error) {
-        console.error(
-          "Erreur récupération des réalisations :",
-          error
-        );
+        if (axios.isAxiosError(error)) {
+          console.error(
+            "Erreur récupération des réalisations :",
+            {
+              url: error.config?.url,
+              status: error.response?.status,
+              data: error.response?.data,
+            }
+          );
+        } else {
+          console.error(
+            "Erreur récupération des réalisations :",
+            error
+          );
+        }
       }
     };
 
     fetchRealisations();
   }, []);
 
-  /* =========================================================
-     WAIT DATA
-  ========================================================= */
-
   if (!data || data.projects.length === 0) {
     return null;
   }
+
+  // reste de ton code inchangé...
 
   const projects = data.projects;
 
