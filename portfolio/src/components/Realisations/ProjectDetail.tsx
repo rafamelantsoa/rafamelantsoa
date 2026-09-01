@@ -13,6 +13,8 @@ import Navbar2 from "../Navbar/Navbar2";
 import Footer from "../Footer/Footer";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
+import PageLoader from "../PageLoader";
+
 /* ==========================================================================
    TYPES
 ========================================================================== */
@@ -65,8 +67,7 @@ const ProjectDetail = () => {
   const [project, setProject] =
     useState<Project | null>(null);
 
-  const [, setLoading] =
-    useState(true);
+    const [loading, setLoading] = useState(true);
 
   const [error, setError] =
     useState(false);
@@ -123,7 +124,33 @@ const ProjectDetail = () => {
      LOADING
   ========================================================================== */
 
+if (loading) {
+  return <PageLoader />;
+}
 
+if (error || !project) {
+  return (
+    <section className="min-h-screen flex items-center justify-center px-6 bg-zinc-200 dark:bg-zinc-800">
+      <div className="text-center">
+        <h1 className="text-4xl font-semibold tracking-tight text-zinc-900 dark:text-white">
+          Projet introuvable
+        </h1>
+
+        <p className="mt-4 text-zinc-500 dark:text-zinc-400">
+          Ce projet n'est plus disponible.
+        </p>
+
+        <Link
+          to="/"
+          className="inline-flex items-center gap-2 mt-8 rounded-full bg-[#2464cc] px-6 py-3 text-sm font-medium text-white hover:bg-[#1d55b0] transition"
+        >
+          <ArrowLeft size={17} />
+          Retour au portfolio
+        </Link>
+      </div>
+    </section>
+  );
+}
   /* ==========================================================================
      ERROR
   ========================================================================== */
@@ -137,8 +164,7 @@ const ProjectDetail = () => {
           </h1>
 
           <p className="mt-4 text-zinc-500 dark:text-zinc-400">
-            Ce projet n'existe pas ou
-            n'est plus disponible.
+            Ce projet n'est plus disponible.
           </p>
 
           <Link
@@ -439,11 +465,16 @@ const ProjectDetail = () => {
 
                 {project.projectUrl ? (
                   <a
-                    href={project.projectUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-3 inline-flex items-center gap-2 text-lg text-[#2464cc] hover:underline"
-                  >
+                  href={
+                    project.projectUrl.startsWith("http://") ||
+                    project.projectUrl.startsWith("https://")
+                      ? project.projectUrl
+                      : `https://${project.projectUrl}`
+                  }
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-3 inline-flex items-center gap-2 text-lg text-[#2464cc] hover:underline"
+                >
                     Voir le projet
 
                     <ExternalLink
