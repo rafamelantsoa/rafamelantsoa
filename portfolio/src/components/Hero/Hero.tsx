@@ -28,7 +28,7 @@ const Hero = () => {
   // --------------------------------------------------------------------------
 
   const [hero, setHero] = useState<HeroData | null>(null);
-  const [, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   // --------------------------------------------------------------------------
@@ -66,7 +66,11 @@ const Hero = () => {
   // ERROR
   // --------------------------------------------------------------------------
 
-  if (error || !hero) {
+  if (loading) {
+    return null;
+  }
+  
+  if (error) {
     return (
       <section
         id="work"
@@ -93,12 +97,15 @@ const Hero = () => {
               dark:text-red-400
             "
           >
-            {error ||
-              "Impossible de charger les informations du Hero."}
+            {error}
           </div>
         </div>
       </section>
     );
+  }
+  
+  if (!hero) {
+    return null;
   }
 
   // --------------------------------------------------------------------------

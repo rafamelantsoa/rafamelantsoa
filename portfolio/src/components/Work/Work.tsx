@@ -242,7 +242,7 @@ const Work = () => {
             STATS
         ================================================================= */}
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 md:gap-8 mb-2 md:mb-16 mx-0 md:mx-10">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 md:gap-8 mb-2 md:mb-16 mx-0 md:mx-10 mt-4">
 
           {work.stats
             .sort(
