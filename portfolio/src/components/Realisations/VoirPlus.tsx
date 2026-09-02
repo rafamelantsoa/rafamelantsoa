@@ -164,7 +164,7 @@ const Voirplus = () => {
   ========================================================= */
 
   return (
-    <section className="px-5 sm:px-8 md:px-12 lg:px-16 py-24 overflow-hidden">
+    <section className="px-5 sm:px-8 md:px-12 lg:px-16 py-10 md:py-24 overflow-hidden">
       <div className="max-w-7xl mx-auto">
 
         {/* =====================================================
@@ -192,7 +192,7 @@ const Voirplus = () => {
             Voir plus
           </p>
 
-          <h2 className="mt-3 text-3xl md:text-4xl font-semibold tracking-tight text-zinc-900 dark:text-white">
+          <h2 className="mt-0 md:mt-3 text-3xl md:text-4xl font-semibold tracking-tight text-zinc-900 dark:text-white">
             Autres projets
           </h2>
         </motion.div>

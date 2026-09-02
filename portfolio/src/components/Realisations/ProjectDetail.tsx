@@ -195,13 +195,13 @@ if (error || !project) {
 
       <Navbar2 />
 
-      <section className="max-w-7xl mx-auto w-full px-8">
+      <section className="max-w-7xl mx-auto w-full px-4 md:px-8">
 
         {/* ================================================================
             HERO
         ================================================================= */}
 
-        <section className="pt-32 pb-20 px-5 sm:px-8 md:px-12 lg:px-16">
+        <section className="pt-14 md:pt-32 md:pb-20 pb-6 px-0 sm:px-8 md:px-12 lg:px-16">
 
         <div className="mt-14 flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between">
   
@@ -253,7 +253,7 @@ if (error || !project) {
             }}
             className="max-w-5xl lg:text-right"
           >
-            <h1 className="mt-5 text-4xl font-black leading-[0.95] tracking-tight text-zinc-900 dark:text-white md:text-6xl lg:text-7xl">
+            <h1 className="md:mt-5 mt-0 text-4xl font-black leading-[0.95] tracking-tight text-zinc-900 dark:text-white md:text-6xl lg:text-7xl">
               {project.title}
             </h1>
           </motion.div>
@@ -266,7 +266,7 @@ if (error || !project) {
             IMAGE PRINCIPALE
         ================================================================= */}
 
-        <section className="px-5 sm:px-8 md:px-12 lg:px-16">
+        <section className="px-0 sm:px-8 md:px-12 lg:px-16">
 
           <div className="max-w-7xl mx-auto ">
 
@@ -300,11 +300,11 @@ if (error || !project) {
             INFORMATIONS
         ================================================================= */}
 
-        <section className="py-24 px-5 sm:px-8 md:px-12 lg:px-16">
+        <section className="md:py-24 py-12 px-5 sm:px-8 md:px-12 lg:px-16">
 
           <div className="max-w-7xl mx-auto">
 
-            <div className="grid md:grid-cols-5 gap-1">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-1">
 
               {/* CATEGORY */}
 
@@ -501,7 +501,7 @@ if (error || !project) {
         {(project.description ||
           project.services?.length) && (
 
-          <section className="pb-24 px-5 sm:px-8 md:px-12 lg:px-16">
+          <section className="md:pb-24 pb-8 px-5 sm:px-8 md:px-12 lg:px-16">
 
             <div className="max-w-7xl mx-auto">
 
@@ -530,7 +530,7 @@ if (error || !project) {
                       À propos du projet
                     </p>
 
-                    <p className="mt-6 text-xl md:text-2xl leading-relaxed text-zinc-700 dark:text-zinc-300 font-light whitespace-pre-line">
+                    <p className="mt-6 text-sm md:text-2xl leading-relaxed text-zinc-700 dark:text-zinc-300 font-light whitespace-pre-line">
                       {project.description}
                     </p>
                   </motion.div>
@@ -551,7 +551,7 @@ if (error || !project) {
 
         <section>
         {gallery.length > 0 && (
-          <section className="relative -mx-5 sm:-mx-8 md:-mx-12 lg:-mx-8 py-8">
+          <section className="relative -mx-5 sm:-mx-8 md:-mx-12 lg:-mx-8 py-2 md:py-8">
             <div className="px-5 sm:px-8 md:px-12 lg:px-16">
 
               {/* IMAGE PRINCIPALE */}
@@ -730,7 +730,7 @@ if (error || !project) {
             CTA
         ================================================================= */}
 
-      <section className="pb-12 px-5 sm:px-8 md:px-12 lg:px-16">
+      <section className="pb-4 md:pb-12 px-5 sm:px-8 md:px-12 lg:px-16">
         <div className="max-w-7xl mx-auto">
           <div className="border-t border-zinc-200 dark:border-zinc-800 pt-12 flex items-center justify-center">
             
