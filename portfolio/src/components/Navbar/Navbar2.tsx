@@ -1,5 +1,4 @@
 import { motion, AnimatePresence } from "framer-motion";
-
 import {
   Sun,
   Moon,
@@ -7,7 +6,6 @@ import {
   LayoutGrid,
   MessageCircle,
 } from "lucide-react";
-
 import { useTheme } from "../../context/ThemeContext";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect } from "react";
@@ -117,6 +115,7 @@ const Navbar2 = () => {
     <>
       {/* =====================================================
           TOP NAV
+          Desktop + Tablette
       ===================================================== */}
 
       <motion.nav
@@ -124,11 +123,17 @@ const Navbar2 = () => {
         animate={{ y: 0, opacity: 1 }}
         className="
           fixed
-          top-6
+          top-4
+          md:top-5
+          lg:top-6
+
           left-1/2
           -translate-x-1/2
+
           z-50
+
           w-full
+
           flex
           justify-center
         "
@@ -136,21 +141,35 @@ const Navbar2 = () => {
         <div
           className="
             relative
-            w-[92%]
+
+            w-[94%]
+            md:w-[94%]
+            lg:w-[92%]
+
             max-w-6xl
+
             flex
             items-center
             justify-between
+
+            gap-3
+
             backdrop-blur-sm
             bg-white/80
             dark:bg-black/60
+
             border
             border-white/10
+
             rounded-full
-            px-6
-            md:px-10
-            py-4
-            md:py-5
+
+            px-4
+            md:px-5
+            lg:px-10
+
+            py-3
+            md:py-3.5
+            lg:py-5
           "
         >
           {/* =====================================================
@@ -158,7 +177,12 @@ const Navbar2 = () => {
           ===================================================== */}
 
           <div
-            className="flex items-center cursor-pointer"
+            className="
+              flex
+              items-center
+              cursor-pointer
+              shrink-0
+            "
             onClick={() => navigate("/")}
           >
             <AnimatePresence mode="wait" initial={false}>
@@ -167,7 +191,12 @@ const Navbar2 = () => {
                   key="dark"
                   src={logoWhite}
                   alt="logo"
-                  className="h-10 w-auto"
+                  className="
+                    h-8
+                    md:h-8
+                    lg:h-10
+                    w-auto
+                  "
                   initial={{
                     opacity: 0,
                     scale: 0.9,
@@ -186,7 +215,12 @@ const Navbar2 = () => {
                   key="light"
                   src={logoColor}
                   alt="logo"
-                  className="h-10 w-auto"
+                  className="
+                    h-8
+                    md:h-8
+                    lg:h-10
+                    w-auto
+                  "
                   initial={{
                     opacity: 0,
                     scale: 0.9,
@@ -205,10 +239,28 @@ const Navbar2 = () => {
           </div>
 
           {/* =====================================================
-              DESKTOP MENU
+              DESKTOP / TABLET MENU
           ===================================================== */}
 
-          <div className="hidden md:flex items-center gap-8 text-md font-medium">
+          <div
+            className="
+              hidden
+              md:flex
+
+              flex-1
+
+              items-center
+              justify-center
+
+              gap-5
+              lg:gap-8
+
+              text-sm
+              lg:text-md
+
+              font-medium
+            "
+          >
             {menu.map((item) => {
               const active =
                 item.path === "/portfolio#contact2"
@@ -224,6 +276,8 @@ const Navbar2 = () => {
                     transition
                     duration-300
                     cursor-pointer
+                    whitespace-nowrap
+
                     ${
                       active
                         ? "text-primary"
@@ -245,10 +299,15 @@ const Navbar2 = () => {
             onClick={toggleTheme}
             aria-label="Changer de thème"
             className="
+              shrink-0
+
               p-2
+
               rounded-full
+
               bg-white/10
               hover:bg-primary/20
+
               transition
               cursor-pointer
             "
@@ -270,7 +329,10 @@ const Navbar2 = () => {
                     opacity: 0,
                   }}
                 >
-                  <Sun size={18} />
+                  <Sun
+                    size={17}
+                    className="lg:w-[18px] lg:h-[18px]"
+                  />
                 </motion.div>
               ) : (
                 <motion.div
@@ -288,7 +350,10 @@ const Navbar2 = () => {
                     opacity: 0,
                   }}
                 >
-                  <Moon size={18} />
+                  <Moon
+                    size={17}
+                    className="lg:w-[18px] lg:h-[18px]"
+                  />
                 </motion.div>
               )}
             </AnimatePresence>
@@ -298,6 +363,7 @@ const Navbar2 = () => {
 
       {/* =====================================================
           MOBILE NAV
+          < 768px
       ===================================================== */}
 
       <motion.div
@@ -305,20 +371,30 @@ const Navbar2 = () => {
         animate={{ y: 0 }}
         className="
           md:hidden
+
           fixed
-          bottom-5
+
+          bottom-4
+
           left-1/2
           -translate-x-1/2
+
           z-50
-          w-[95%]
+
+          w-[94%]
+
           rounded-3xl
+
           backdrop-blur-md
+
           bg-white/80
           dark:bg-black/60
+
           border
           border-white/10
-          px-2
-          py-2
+
+          px-1
+          py-1.5
         "
       >
         <div className="flex justify-around">
@@ -339,9 +415,14 @@ const Navbar2 = () => {
                   flex
                   flex-col
                   items-center
+                  justify-center
+
                   gap-1
+
                   w-full
-                  py-2
+
+                  py-1.5
+
                   cursor-pointer
                 "
               >
@@ -355,7 +436,7 @@ const Navbar2 = () => {
                   }}
                 >
                   <Icon
-                    size={22}
+                    size={21}
                     className={
                       active
                         ? "text-primary"
@@ -366,7 +447,8 @@ const Navbar2 = () => {
 
                 <span
                   className={`
-                    text-[11px]
+                    text-[10px]
+
                     ${
                       active
                         ? "text-primary"

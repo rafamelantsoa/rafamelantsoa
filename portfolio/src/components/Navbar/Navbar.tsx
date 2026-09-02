@@ -64,6 +64,7 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  /* ================= NAVIGATION ================= */
   const handleNavigation = (id: string) => {
     if (id === "realisations") {
       setActive("realisations");
@@ -77,17 +78,67 @@ const Navbar = () => {
 
   return (
     <>
-      {/* ================= TOP NAV ================= */}
+      {/* =========================================================
+          TOP NAVBAR
+          Desktop + Tablette
+          md = 768px
+          ========================================================= */}
       <motion.nav
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-full flex justify-center"
+        className="
+          fixed
+          top-4
+          md:top-5
+          lg:top-6
+          left-1/2
+          -translate-x-1/2
+          z-50
+          w-full
+          flex
+          justify-center
+        "
       >
-        <div className="relative w-[92%] max-w-6xl flex items-center justify-between backdrop-blur-sm bg-white/80 dark:bg-black/60 border border-white/10 rounded-full px-6 md:px-10 py-4 md:py-5">
+        <div
+          className="
+            relative
+            w-[94%]
+            md:w-[94%]
+            lg:w-[92%]
+            max-w-6xl
 
-          {/* LOGO */}
+            flex
+            items-center
+            justify-between
+
+            backdrop-blur-sm
+            bg-white/80
+            dark:bg-black/60
+
+            border
+            border-white/10
+
+            rounded-full
+
+            px-4
+            md:px-5
+            lg:px-10
+
+            py-3
+            md:py-3.5
+            lg:py-5
+
+            gap-3
+          "
+        >
+          {/* ================= LOGO ================= */}
           <div
-            className="flex items-center cursor-pointer"
+            className="
+              flex
+              items-center
+              cursor-pointer
+              shrink-0
+            "
             onClick={() => navigate("/")}
           >
             <AnimatePresence mode="wait" initial={false}>
@@ -96,7 +147,12 @@ const Navbar = () => {
                   key="dark"
                   src={logoWhite}
                   alt="logo"
-                  className="h-10 w-auto"
+                  className="
+                    h-8
+                    md:h-8
+                    lg:h-10
+                    w-auto
+                  "
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.9 }}
@@ -106,7 +162,12 @@ const Navbar = () => {
                   key="light"
                   src={logoColor}
                   alt="logo"
-                  className="h-10 w-auto"
+                  className="
+                    h-8
+                    md:h-8
+                    lg:h-10
+                    w-auto
+                  "
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.9 }}
@@ -115,39 +176,94 @@ const Navbar = () => {
             </AnimatePresence>
           </div>
 
-          {/* DESKTOP MENU */}
-          <div className="hidden md:flex items-center gap-8 text-md font-medium">
+          {/* =====================================================
+              DESKTOP / TABLET MENU
+              ===================================================== */}
+          <div
+            className="
+              hidden
+              md:flex
+
+              items-center
+              justify-center
+
+              gap-4
+              lg:gap-8
+
+              text-sm
+              lg:text-md
+
+              font-medium
+
+              flex-1
+            "
+          >
             {menu.map((item) => (
               <button
                 key={item.id}
                 onClick={() => handleNavigation(item.id)}
-                className="relative cursor-pointer"
+                className="
+                  relative
+                  cursor-pointer
+                  whitespace-nowrap
+                "
               >
                 <span
-                  className={`transition duration-300 ${
-                    active === item.id
-                      ? "text-primary"
-                      : "text-zinc-700 hover:text-primary dark:text-zinc-300"
-                  }`}
+                  className={`
+                    transition
+                    duration-300
+
+                    ${
+                      active === item.id
+                        ? "text-primary"
+                        : "text-zinc-700 hover:text-primary dark:text-zinc-300"
+                    }
+                  `}
                 >
                   {item.label}
                 </span>
 
                 <span
-                  className={`absolute left-0 -bottom-1 h-[2px] bg-primary transition-all duration-300 ${
-                    active === item.id
-                      ? "w-full opacity-100"
-                      : "w-0 opacity-0"
-                  }`}
+                  className={`
+                    absolute
+                    left-0
+                    -bottom-1
+                    h-[2px]
+                    bg-primary
+                    transition-all
+                    duration-300
+
+                    ${
+                      active === item.id
+                        ? "w-full opacity-100"
+                        : "w-0 opacity-0"
+                    }
+                  `}
                 />
               </button>
             ))}
           </div>
 
-          {/* THEME TOGGLE */}
+          {/* ================= THEME TOGGLE ================= */}
           <button
             onClick={toggleTheme}
-            className="p-2 rounded-full bg-white/10 hover:bg-primary/20 transition"
+            className="
+              shrink-0
+
+              p-2
+              md:p-2
+              lg:p-2
+
+              rounded-full
+
+              bg-white/10
+              hover:bg-primary/20
+
+              transition
+
+              cursor-pointer
+            "
+            aria-label="Changer le thème"
           >
             <AnimatePresence mode="wait">
               {theme === "dark" ? (
@@ -157,7 +273,10 @@ const Navbar = () => {
                   animate={{ rotate: 0, opacity: 1 }}
                   exit={{ rotate: 90, opacity: 0 }}
                 >
-                  <Sun size={18} />
+                  <Sun
+                    size={17}
+                    className="md:w-[18px] md:h-[18px]"
+                  />
                 </motion.div>
               ) : (
                 <motion.div
@@ -166,7 +285,10 @@ const Navbar = () => {
                   animate={{ rotate: 0, opacity: 1 }}
                   exit={{ rotate: 90, opacity: 0 }}
                 >
-                  <Moon size={18} />
+                  <Moon
+                    size={17}
+                    className="md:w-[18px] md:h-[18px]"
+                  />
                 </motion.div>
               )}
             </AnimatePresence>
@@ -174,11 +296,37 @@ const Navbar = () => {
         </div>
       </motion.nav>
 
-      {/* ================= MOBILE NAV ================= */}
+      {/* =========================================================
+          MOBILE NAVBAR
+          Uniquement sous 768px
+          ========================================================= */}
       <motion.div
         initial={{ y: 100 }}
         animate={{ y: 0 }}
-        className="md:hidden fixed bottom-5 left-1/2 -translate-x-1/2 z-50 w-[95%] rounded-3xl backdrop-blur-md bg-white/80 dark:bg-black/60 border border-white/10 px-2 py-2"
+        className="
+          md:hidden
+
+          fixed
+          bottom-4
+          left-1/2
+          -translate-x-1/2
+
+          z-50
+
+          w-[94%]
+
+          rounded-3xl
+
+          backdrop-blur-md
+          bg-white/80
+          dark:bg-black/60
+
+          border
+          border-white/10
+
+          px-1
+          py-1.5
+        "
       >
         <div className="flex justify-around">
           {menu.map((item) => {
@@ -188,14 +336,32 @@ const Navbar = () => {
               <button
                 key={item.id}
                 onClick={() => handleNavigation(item.id)}
-                className="flex flex-col items-center gap-1 w-full py-2"
+                className="
+                  flex
+                  flex-col
+                  items-center
+                  justify-center
+
+                  gap-1
+
+                  w-full
+
+                  py-1.5
+
+                  cursor-pointer
+                "
               >
                 <motion.div
-                  animate={{ scale: active === item.id ? 1.15 : 1 }}
-                  transition={{ type: "spring", stiffness: 300 }}
+                  animate={{
+                    scale: active === item.id ? 1.15 : 1,
+                  }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 300,
+                  }}
                 >
                   <Icon
-                    size={22}
+                    size={21}
                     className={
                       active === item.id
                         ? "text-primary"
@@ -205,11 +371,14 @@ const Navbar = () => {
                 </motion.div>
 
                 <span
-                  className={`text-[11px] ${
-                    active === item.id
-                      ? "text-primary"
-                      : "text-zinc-500"
-                  }`}
+                  className={`
+                    text-[10px]
+                    ${
+                      active === item.id
+                        ? "text-primary"
+                        : "text-zinc-500"
+                    }
+                  `}
                 >
                   {item.label}
                 </span>
