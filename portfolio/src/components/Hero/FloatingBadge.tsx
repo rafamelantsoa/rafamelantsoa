@@ -91,7 +91,7 @@ const FloatingBadge = ({
       className="
         absolute
         z-20
-        md:left-[60%] left-[40%]
+        md:left-[60%] left-[20%]
         md:top-[65%] top-[75%]
         flex
         items-center
