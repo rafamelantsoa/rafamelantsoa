@@ -218,7 +218,7 @@ const Footer = () => {
           {/* ================= LEFT ================= */}
 
           <div>
-            <h2 className="text-5xl font-title font-semibold leading-tight text-white/90">
+            <h2 className="text-2xl md:text-5xl font-title font-semibold leading-tight text-white/90">
               {footer.title}
             </h2>
 

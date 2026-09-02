@@ -28,7 +28,7 @@ const Hero = () => {
   // --------------------------------------------------------------------------
 
   const [hero, setHero] = useState<HeroData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   // --------------------------------------------------------------------------
@@ -60,118 +60,7 @@ const Hero = () => {
     loadHero();
   }, []);
 
-  // --------------------------------------------------------------------------
-  // LOADING
-  // --------------------------------------------------------------------------
 
-  if (loading) {
-    return (
-      <section
-        id="work"
-        className="
-          min-h-screen
-          flex
-          items-center
-          pt-28
-          pb-20
-        "
-      >
-        <div className="max-w-7xl mx-auto w-full px-8">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-
-            {/* LEFT SKELETON */}
-
-            <div className="order-2 lg:order-1 ml-0 lg:ml-10">
-              <div
-                className="
-                  h-10
-                  w-72
-                  rounded-full
-                  bg-zinc-200
-                  dark:bg-zinc-800
-                  animate-pulse
-                "
-              />
-
-              <div
-                className="
-                  mt-6
-                  h-32
-                  w-full
-                  max-w-xl
-                  rounded-xl
-                  bg-zinc-200
-                  dark:bg-zinc-800
-                  animate-pulse
-                "
-              />
-
-              <div
-                className="
-                  mt-6
-                  h-24
-                  w-full
-                  max-w-xl
-                  rounded-xl
-                  bg-zinc-200
-                  dark:bg-zinc-800
-                  animate-pulse
-                "
-              />
-
-              <div className="flex gap-5 mt-10">
-                <div
-                  className="
-                    h-14
-                    w-48
-                    rounded-md
-                    bg-zinc-200
-                    dark:bg-zinc-800
-                    animate-pulse
-                  "
-                />
-
-                <div
-                  className="
-                    h-14
-                    w-40
-                    rounded-md
-                    bg-zinc-200
-                    dark:bg-zinc-800
-                    animate-pulse
-                  "
-                />
-              </div>
-            </div>
-
-            {/* RIGHT SKELETON */}
-
-            <div
-              className="
-                flex
-                justify-center
-                order-1
-                lg:order-2
-              "
-            >
-              <div
-                className="
-                  w-full
-                  max-w-xl
-                  h-[450px]
-                  rounded-2xl
-                  bg-zinc-200
-                  dark:bg-zinc-800
-                  animate-pulse
-                "
-              />
-            </div>
-
-          </div>
-        </div>
-      </section>
-    );
-  }
 
   // --------------------------------------------------------------------------
   // ERROR
