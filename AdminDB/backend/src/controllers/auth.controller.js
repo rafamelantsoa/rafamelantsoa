@@ -50,8 +50,8 @@ export const login = async (req, res) => {
     // Stockage du JWT dans un cookie HttpOnly
     res.cookie("admin_token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      secure: true,
+      sameSite: "none",
       maxAge: 24 * 60 * 60 * 1000,
     });
 
@@ -79,8 +79,8 @@ export const logout = async (req, res) => {
   try {
     res.clearCookie("admin_token", {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      secure: true,
+      sameSite: "none",
     });
 
     return res.status(200).json({
