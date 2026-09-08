@@ -216,7 +216,6 @@ const Hero = () => {
                 mt-4
                 max-w-xl
                 text-lg
-                leading-5
                 text-zinc-600
                 dark:text-zinc-400
               "
