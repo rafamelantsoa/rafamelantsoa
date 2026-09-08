@@ -290,7 +290,7 @@ const Work = () => {
 
     {/* TEXT */}
 
-    <div className="relative flex w-max animate-[marquee_18s_linear_infinite]">
+    <div className="relative flex w-max animate-[marquee_44s_linear_infinite]">
 
       {[...work.marquee, ...work.marquee].map(
         (item, index) => (
@@ -409,7 +409,7 @@ const Work = () => {
 
     {/* TEXT — SENS INVERSE */}
 
-    <div className="relative flex w-max animate-[marqueeReverse_18s_linear_infinite]">
+    <div className="relative flex w-max animate-[marqueeReverse_44s_linear_infinite]">
 
       {[...work.marquee, ...work.marquee].map(
         (item, index) => (
