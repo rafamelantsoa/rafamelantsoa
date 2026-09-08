@@ -215,7 +215,7 @@ const Hero = () => {
               className="
                 mt-4
                 max-w-xl
-                text-sm
+                text-lg
                 leading-8
                 text-zinc-600
                 dark:text-zinc-400
