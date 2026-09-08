@@ -1,6 +1,12 @@
 import Contact from "../models/Contact.js";
 import ContactMessage from "../models/ContactMessage.js";
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
+
+/* =========================================================
+   RESEND
+========================================================= */
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 /* =========================================================
    EMAIL VALIDATION
@@ -24,19 +30,6 @@ const escapeHtml = (value = "") => {
 };
 
 /* =========================================================
-   NODEMAILER TRANSPORTER
-========================================================= */
-
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
-
-/* =========================================================
    GET CONTACT SETTINGS
    GET /api/contact
 ========================================================= */
@@ -52,18 +45,14 @@ export const getContact = async (req, res) => {
     if (!contact) {
       contact = await Contact.create({
         title: "Travaillons Ensemble",
-
         paragraph:
           "Envoyez votre demande directement dans mon dashboard admin. Je vous répondrai rapidement avec une proposition adaptée à votre projet.",
-
         checklist: [
           "Réponse rapide sous 24–48h",
           "Collaboration freelance ou long terme",
           "Design, branding & développement web",
         ],
-
-        contactEmail:
-          process.env.CONTACT_EMAIL || "",
+        contactEmail: process.env.CONTACT_EMAIL || "",
       });
     }
 
@@ -228,7 +217,7 @@ export const updateContact = async (req, res) => {
        ↓
    MongoDB
        ↓
-   Gmail / Nodemailer
+   Resend API HTTPS
        ↓
    Email configuré dans TailAdmin
 ========================================================= */
@@ -307,16 +296,13 @@ export const createContactMessage = async (
     if (!contact) {
       contact = await Contact.create({
         title: "Travaillons Ensemble",
-
         paragraph:
           "Envoyez votre demande directement dans mon dashboard admin. Je vous répondrai rapidement avec une proposition adaptée à votre projet.",
-
         checklist: [
           "Réponse rapide sous 24–48h",
           "Collaboration freelance ou long terme",
           "Design, branding & développement web",
         ],
-
         contactEmail:
           process.env.CONTACT_EMAIL || "",
       });
@@ -369,114 +355,140 @@ export const createContactMessage = async (
       );
 
     /* -------------------------------------------------------
-       SEND EMAIL WITH NODEMAILER
+       SEND EMAIL WITH RESEND
     ------------------------------------------------------- */
 
     try {
-      await transporter.sendMail({
-        from: {
-          name: "Portfolio Annicolas Rafamelantsoa",
-          address: process.env.EMAIL_USER,
-        },
+      /*
+       * IMPORTANT :
+       * Pour le premier test, utilise l'adresse
+       * fournie par Resend :
+       *
+       * onboarding@resend.dev
+       *
+       * Une fois ton domaine vérifié sur Resend,
+       * tu pourras remplacer cette adresse par
+       * ton propre domaine.
+       */
 
-        to: receiverEmail,
+      const { data, error } =
+        await resend.emails.send({
+          from:
+            "Portfolio Annicolas Rafamelantsoa <onboarding@resend.dev>",
 
-        replyTo: email.trim(),
+          to: [receiverEmail],
 
-        subject:
-          `Nouveau message de ${name.trim()}`,
+          replyTo: email.trim(),
 
-        html: `
-          <div
-            style="
-              font-family: Arial, sans-serif;
-              max-width: 700px;
-              margin: 0 auto;
-              padding: 30px;
-              color: #18181b;
-            "
-          >
+          subject:
+            `Nouveau message de ${name.trim()}`,
 
-            <h2
-              style="
-                margin-bottom: 25px;
-              "
-            >
-              Nouveau message depuis votre portfolio
-            </h2>
-
+          html: `
             <div
               style="
-                padding: 20px;
-                border: 1px solid #e4e4e7;
-                border-radius: 12px;
+                font-family: Arial, sans-serif;
+                max-width: 700px;
+                margin: 0 auto;
+                padding: 30px;
+                color: #18181b;
               "
             >
 
-              <p>
-                <strong>Nom :</strong>
-                ${safeName}
-              </p>
-
-              <p>
-                <strong>Email :</strong>
-                ${safeEmail}
-              </p>
-
-              <hr
+              <h2
                 style="
-                  border: none;
-                  border-top: 1px solid #e4e4e7;
-                  margin: 20px 0;
+                  margin-bottom: 25px;
                 "
-              />
+              >
+                Nouveau message depuis votre portfolio
+              </h2>
 
-              <p>
-                <strong>Message :</strong>
-              </p>
+              <div
+                style="
+                  padding: 20px;
+                  border: 1px solid #e4e4e7;
+                  border-radius: 12px;
+                "
+              >
 
-              <p>
-                ${safeMessage}
+                <p>
+                  <strong>Nom :</strong>
+                  ${safeName}
+                </p>
+
+                <p>
+                  <strong>Email :</strong>
+                  ${safeEmail}
+                </p>
+
+                <hr
+                  style="
+                    border: none;
+                    border-top: 1px solid #e4e4e7;
+                    margin: 20px 0;
+                  "
+                />
+
+                <p>
+                  <strong>Message :</strong>
+                </p>
+
+                <p>
+                  ${safeMessage}
+                </p>
+
+              </div>
+
+              <p
+                style="
+                  margin-top: 25px;
+                  color: #71717a;
+                  font-size: 13px;
+                "
+              >
+                Message envoyé depuis le formulaire
+                de contact du portfolio.
               </p>
 
             </div>
+          `,
+        });
 
-            <p
-              style="
-                margin-top: 25px;
-                color: #71717a;
-                font-size: 13px;
-              "
-            >
-              Message envoyé depuis le formulaire
-              de contact du portfolio.
-            </p>
+      /* -----------------------------------------------------
+         RESEND ERROR
+      ----------------------------------------------------- */
 
-          </div>
-        `,
-      });
+      if (error) {
+        console.error(
+          "RESEND EMAIL ERROR:",
+          error
+        );
+
+        return res.status(500).json({
+          message:
+            "Le message a été enregistré, mais l'email n'a pas pu être envoyé.",
+          saved: true,
+        });
+      }
+
+      /* -----------------------------------------------------
+         SUCCESS RESEND
+      ----------------------------------------------------- */
 
       console.log(
-        "Email Gmail envoyé avec succès."
+        "Email Resend envoyé avec succès.",
+        data
       );
 
     } catch (emailError) {
-
       /*
        * Le message reste enregistré dans MongoDB
-       * même si Gmail rencontre un problème.
+       * même si Resend rencontre un problème.
        */
 
       console.error(
-        "NODEMAILER EMAIL ERROR:",
+        "RESEND EMAIL ERROR:",
         emailError
       );
-
-      /*
-       * On retourne quand même une erreur au frontend
-       * pour que l'utilisateur sache que l'email
-       * n'a pas pu être envoyé.
-       */
 
       return res.status(500).json({
         message:
@@ -496,7 +508,6 @@ export const createContactMessage = async (
     });
 
   } catch (error) {
-
     console.error(
       "CREATE CONTACT MESSAGE ERROR:",
       error
@@ -564,6 +575,7 @@ export const markContactMessageAsRead = async (
     }
 
     res.status(200).json(message);
+
   } catch (error) {
     console.error(
       "MARK CONTACT MESSAGE READ ERROR:",
@@ -603,6 +615,7 @@ export const deleteContactMessage = async (
       message:
         "Message supprimé avec succès.",
     });
+
   } catch (error) {
     console.error(
       "DELETE CONTACT MESSAGE ERROR:",
