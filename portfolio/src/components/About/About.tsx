@@ -283,7 +283,7 @@ const About = () => {
         />
 
 
-      <section className="max-w-7xl px-16 mx-auto">
+      <section className="md:max-w-7xl max-w-xl md:px-16 px-2 mx-auto">
         
       {/* =================================================
             TOOLS TITLE
@@ -291,7 +291,7 @@ const About = () => {
 
        <div
           className="
-            mt-24
+            md:mt-24 mt-8 md:px-0 px-6
             mb-10
           "
         >
@@ -319,11 +319,11 @@ const About = () => {
         <div
           className="
             grid
-            grid-cols-2
+            grid-cols-3
             sm:grid-cols-3
             md:grid-cols-4
             lg:grid-cols-4
-            gap-6
+            gap-2 md:gap-6
           "
         >
 
@@ -366,7 +366,7 @@ const About = () => {
                   border-zinc-200
                   dark:border-zinc-800
                   rounded-3xl
-                  p-6
+                  md:p-6 p-2
                   hover:border-zinc-400
                   dark:hover:border-zinc-600
                   transition

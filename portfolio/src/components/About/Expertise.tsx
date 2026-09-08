@@ -472,7 +472,7 @@ const Expertise = ({
                   className={`
                     relative
                     w-full
-                    min-h-[620px]
+                    min-h-[420px]
                     flex
                     flex-col
                     justify-center

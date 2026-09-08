@@ -228,48 +228,50 @@ const Experience = () => {
         </div>
 
         {/* =================================================
-            EXPERIENCE SKELETON
+            EXPERIENCE SKELETON (2 colonnes)
         ================================================= */}
 
-        <div className="space-y-8">
-          {[1, 2, 3].map(
+        <div className="columns-1 md:columns-2 gap-x-12">
+          {[1, 2, 3, 4].map(
             (item) => (
               <div
                 key={item}
                 className="
-                  grid
-                  grid-cols-1
-                  md:grid-cols-3
-                  gap-6
-                  border-l
-                  bg-white
-                  dark:bg-white/10
-                  rounded-xl
+                  break-inside-avoid
+                  mb-8
+                  pb-6
+                  border-b
                   border-zinc-200
                   dark:border-zinc-800
-                  px-12
-                  py-10
                   animate-pulse
                 "
               >
-                {/* COMPANY + ROLE */}
-
-                <div>
+                <div className="flex justify-between items-start">
+                  <div>
+                    <div
+                      className="
+                        h-6
+                        w-40
+                        rounded
+                        bg-zinc-200
+                        dark:bg-zinc-800
+                      "
+                    />
+                    <div
+                      className="
+                        mt-2
+                        h-4
+                        w-32
+                        rounded
+                        bg-zinc-200
+                        dark:bg-zinc-800
+                      "
+                    />
+                  </div>
                   <div
                     className="
-                      h-7
-                      w-48
-                      rounded
-                      bg-zinc-200
-                      dark:bg-zinc-800
-                    "
-                  />
-
-                  <div
-                    className="
-                      mt-3
-                      h-5
-                      w-40
+                      h-4
+                      w-24
                       rounded
                       bg-zinc-200
                       dark:bg-zinc-800
@@ -277,57 +279,20 @@ const Experience = () => {
                   />
                 </div>
 
-                {/* MISSIONS */}
-
-                <div className="space-y-3">
+                <div className="mt-4 space-y-2">
                   <div
                     className="
-                      h-4
+                      h-3
                       w-full
                       rounded
                       bg-zinc-200
                       dark:bg-zinc-800
                     "
                   />
-
                   <div
                     className="
-                      h-4
+                      h-3
                       w-11/12
-                      rounded
-                      bg-zinc-200
-                      dark:bg-zinc-800
-                    "
-                  />
-
-                  <div
-                    className="
-                      h-4
-                      w-10/12
-                      rounded
-                      bg-zinc-200
-                      dark:bg-zinc-800
-                    "
-                  />
-
-                  <div
-                    className="
-                      h-4
-                      w-9/12
-                      rounded
-                      bg-zinc-200
-                      dark:bg-zinc-800
-                    "
-                  />
-                </div>
-
-                {/* DATE */}
-
-                <div className="md:flex md:justify-end">
-                  <div
-                    className="
-                      h-5
-                      w-28
                       rounded
                       bg-zinc-200
                       dark:bg-zinc-800
@@ -423,13 +388,13 @@ const Experience = () => {
   return (
     <section
       id="services"
-      className="md:py-24 py-12 px-2 md:px-12 lg:px-16 max-w-7xl mx-auto "
+      className="md:py-24 py-12 px-8 md:px-12 lg:px-16 max-w-7xl mx-auto "
     >
       {/* =================================================
           TITLE
       ================================================= */}
 
-      <div className="mb-8 ml-8 md:ml-0">
+      <div className="mb-8 ml-0 md:ml-0">
         <h2
           className="
             text-4xl
@@ -443,7 +408,13 @@ const Experience = () => {
       </div>
 
       {/* =================================================
-          LIST
+          LIST — 2 COLONNES
+
+          columns-2 fait couler la liste comme un
+          journal : la colonne de gauche se remplit
+          d'abord, puis la colonne de droite.
+          break-inside-avoid empêche qu'une expérience
+          soit coupée entre deux colonnes.
 
           L'ordre est déjà trié au chargement :
           1. Present
@@ -452,7 +423,7 @@ const Experience = () => {
           etc.
       ================================================= */}
 
-      <div className="md:space-y-8 space-y-2">
+      <div className="columns-1 md:columns-2 gap-x-12 lg:gap-x-16">
         {experiences.map(
           (exp, index) => (
             <motion.div
@@ -473,112 +444,100 @@ const Experience = () => {
               }}
               transition={{
                 duration: 0.5,
-                delay: index * 0.1,
+                delay: (index % 2) * 0.1,
               }}
               className="
-                grid
-                grid-cols-1
-                md:grid-cols-3
-                gap-6
-                border-l
-                bg-white
-                dark:bg-white/10
-                rounded-xl
-                border-zinc-200
-                dark:border-zinc-800
-                md:px-12 px-8
-                py-10
+                break-inside-avoid
+                mb-8
+                pb-6
+                border-b
+                border-primary
+                dark:border-primary
               "
             >
               {/* =========================================
-                  LEFT: COMPANY + ROLE
+                  HAUT : NOM + DATE SUR LA MÊME LIGNE
               ========================================= */}
 
-              <div>
-                <h3
-                  className="
-                    text-xl
-                    font-semibold
-                    text-zinc-900
-                    dark:text-white
-                  "
-                >
-                  {exp.company}
-                </h3>
+              <div className="flex justify-between items-start gap-4">
+                <div>
+                  <h3
+                    className="
+                      text-lg
+                      md:text-xl
+                      font-bold
+                      uppercase
+                      tracking-tight
+                      text-zinc-900
+                      dark:text-white
+                    "
+                  >
+                    {exp.company}
+                  </h3>
 
-                <p
-                  className="
-                    text-sm
-                    text-zinc-500
-                    dark:text-zinc-400
-                    mt-1
-                  "
-                >
-                  {exp.role}
-                </p>
-              </div>
+                  <p
+                    className="
+                      text-xs
+                      font-semibold
+                      uppercase
+                      tracking-wide
+                      text-primary
+                      dark:text-primary
+                      mt-1
+                    "
+                  >
+                    {exp.role}
+                  </p>
+                </div>
 
-              {/* =========================================
-                  MIDDLE: MISSIONS
-              ========================================= */}
-
-              <div className="md:col-span-1">
-                <ul
-                  className="
-                    space-y-2
-                    text-sm
-                    text-zinc-600
-                    dark:text-zinc-400
-                    leading-relaxed
-                  "
-                >
-                  {(
-                    Array.isArray(exp.missions)
-                      ? exp.missions
-                      : []
-                  ).map(
-                    (
-                      mission,
-                      missionIndex
-                    ) => (
-                      <li
-                        key={`${exp._id || index}-mission-${missionIndex}`}
-                        className="flex gap-2"
-                      >
-                        <span className="text-zinc-400">
-                          —
-                        </span>
-
-                        {mission}
-                      </li>
-                    )
-                  )}
-                </ul>
-              </div>
-
-              {/* =========================================
-                  RIGHT: DATE
-              ========================================= */}
-
-              <div
-                className="
-                  md:text-right
-                  flex
-                  md:justify-end
-                  items-start
-                "
-              >
                 <span
                   className="
-                    text-sm
+                    text-xs
                     text-zinc-500
                     dark:text-zinc-400
                     font-medium
+                    whitespace-nowrap
+                    mt-1
                   "
                 >
                   {exp.date}
                 </span>
               </div>
+
+              {/* =========================================
+                  MISSIONS
+              ========================================= */}
+
+              <ul
+                className="
+                  mt-3
+                  space-y-1.5
+                  text-sm
+                  text-zinc-600
+                  dark:text-zinc-400
+                  leading-relaxed
+                "
+              >
+                {(
+                  Array.isArray(exp.missions)
+                    ? exp.missions
+                    : []
+                ).map(
+                  (
+                    mission,
+                    missionIndex
+                  ) => (
+                    <li
+                      key={`${exp._id || index}-mission-${missionIndex}`}
+                    >
+                      {mission}
+                      {missionIndex <
+                        (exp.missions?.length || 0) - 1 &&
+                        " · "}
+                    </li>
+                  )
+                )}
+              </ul>
             </motion.div>
           )
         )}
