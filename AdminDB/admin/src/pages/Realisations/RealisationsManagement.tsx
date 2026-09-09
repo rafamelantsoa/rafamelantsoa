@@ -802,77 +802,75 @@ const RealisationsManagement = () => {
     direction: "up" | "down"
   ) => {
     if (!data) return;
-
+  
     const projects = [...data.projects].sort(
       (a, b) => a.order - b.order
     );
-
+  
     const newIndex =
-      direction === "up"
-        ? index - 1
-        : index + 1;
-
-    if (
-      newIndex < 0 ||
-      newIndex >= projects.length
-    ) {
+      direction === "up" ? index - 1 : index + 1;
+  
+    if (newIndex < 0 || newIndex >= projects.length) {
       return;
     }
-
-    [
-      projects[index],
-      projects[newIndex],
-    ] = [
-      projects[newIndex],
-      projects[index],
+  
+    // Échanger les deux projets
+    const reorderedProjects = [...projects];
+  
+    [reorderedProjects[index], reorderedProjects[newIndex]] = [
+      reorderedProjects[newIndex],
+      reorderedProjects[index],
     ];
-
-    const orderedProjects =
-      projects.map((project, i) => ({
+  
+    // Recalculer les order
+    const orderedProjects = reorderedProjects.map(
+      (project, i) => ({
         ...project,
         order: i,
-      }));
-
+      })
+    );
+  
+    // Mise à jour optimiste de l'interface
     setData({
       ...data,
       projects: orderedProjects,
     });
-
+  
     try {
       startLoading();
-
+  
       await axiosInstance.put(
         `${API_URL}/projects/reorder`,
         {
-          projects:
-            orderedProjects.map(
-              (project, i) => ({
-                id: project._id,
-                order: i,
-              })
-            ),
+          projects: orderedProjects.map((project) => ({
+            id: project._id,
+            order: project.order,
+          })),
         }
       );
-
-      toast.success(
-        "Ordre des projets mis à jour."
-      );
+  
+      toast.success("Ordre des projets mis à jour.");
     } catch (error) {
-      console.error(
-        "Erreur réorganisation:",
-        error
-      );
-
-      toast.error(
-        "Impossible de modifier l'ordre."
-      );
-
-      fetchRealisations();
+      console.error("Erreur réorganisation:", error);
+  
+      if (axios.isAxiosError(error)) {
+        console.error("Status:", error.response?.status);
+        console.error("Response:", error.response?.data);
+  
+        toast.error(
+          error.response?.data?.message ||
+            "Impossible de modifier l'ordre."
+        );
+      } else {
+        toast.error("Impossible de modifier l'ordre.");
+      }
+  
+      // Restaurer les données depuis le serveur
+      await fetchRealisations();
     } finally {
       stopLoading();
     }
   };
-
   /* ================================================================
      ERROR
   ================================================================ */

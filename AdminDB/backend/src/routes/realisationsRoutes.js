@@ -32,7 +32,6 @@ router.put("/", updateRealisations);
 /* ================================================================
    ADD PROJECT
    POST /api/realisations/projects
-
    image = image principale
 ================================================================ */
 
@@ -43,9 +42,21 @@ router.post(
 );
 
 /* ================================================================
+   REORDER PROJECTS
+   PUT /api/realisations/projects/reorder
+
+   IMPORTANT :
+   Cette route doit être AVANT /projects/:id
+================================================================ */
+
+router.put(
+  "/projects/reorder",
+  reorderProjects
+);
+
+/* ================================================================
    UPDATE PROJECT
    PUT /api/realisations/projects/:id
-
    image = nouvelle image principale facultative
 ================================================================ */
 
@@ -58,7 +69,6 @@ router.put(
 /* ================================================================
    ADD GALLERY IMAGES
    POST /api/realisations/projects/:id/gallery
-
    images = plusieurs images
 ================================================================ */
 
@@ -86,16 +96,6 @@ router.delete(
 router.delete(
   "/projects/:id",
   deleteProject
-);
-
-/* ================================================================
-   REORDER PROJECTS
-   PUT /api/realisations/projects/reorder
-================================================================ */
-
-router.put(
-  "/projects/reorder",
-  reorderProjects
 );
 
 export default router;
