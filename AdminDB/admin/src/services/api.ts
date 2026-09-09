@@ -2,7 +2,15 @@ import axios from "axios";
 
 const API_URL =
   import.meta.env.VITE_API_URL ||
-  "http://localhost:5000/api";
+  (import.meta.env.DEV
+    ? "http://localhost:5000/api"
+    : "");
+
+if (!API_URL) {
+  throw new Error(
+    "VITE_API_URL est obligatoire en Production."
+  );
+}
 
 const api = axios.create({
   baseURL: API_URL,
