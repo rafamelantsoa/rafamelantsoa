@@ -415,7 +415,7 @@ if (error || !project) {
                       }}
                     >
                       <p className="text-xs uppercase tracking-[0.2em] text-zinc-400">
-                        Services
+                        Outils
                       </p>
 
                       <div className="mt-6 flex flex-wrap gap-3">
