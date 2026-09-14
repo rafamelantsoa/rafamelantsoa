@@ -374,7 +374,7 @@ export const createContactMessage = async (
       const { data, error } =
         await resend.emails.send({
           from:
-            "Portfolio <anicolasrayden@gmail.com>",
+            "onboarding@resend.dev",
 
           to: [receiverEmail],
 
