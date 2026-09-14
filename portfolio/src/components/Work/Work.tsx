@@ -285,23 +285,16 @@ const Work = () => {
       bg-primary
     "
   >
-
-
-
-    {/* TEXT */}
-
-    <div className="relative flex w-max animate-[marquee_44s_linear_infinite]">
-
-      {[...work.marquee, ...work.marquee].map(
-        (item, index) => (
+    <div className="relative flex w-max animate-[marquee_80s_linear_infinite]">
+      {[...work.marquee, ...work.marquee].map((item, index) => (
+        <div key={`${item}-${index}`} className="flex items-center">
           <span
-            key={`${item}-${index}`}
             className="
-              mx-10
+              mx-3
               text-2xl
               font-black
               uppercase
-              tracking-[0.15em]
+              tracking-[0.12em]
               text-zinc-100
               md:text-3xl
               lg:text-4xl
@@ -309,13 +302,22 @@ const Work = () => {
           >
             {item}
           </span>
-        )
-      )}
 
+          <span
+            className="
+              text-xl
+              font-bold
+              text-secondary
+              md:text-2xl
+              lg:text-3xl
+            "
+          >
+            /
+          </span>
+        </div>
+      ))}
     </div>
-
   </div>
-
 
   {/* ================================
       MARQUEE 002 — DROITE → GAUCHE
@@ -335,12 +337,8 @@ const Work = () => {
       bg-[#0a0a1f]
     "
   >
-
     {/* BACKGROUND GRADIENT */}
-
     <div className="absolute inset-0 pointer-events-none">
-
-      {/* Orange glow */}
       <div
         className="
           absolute
@@ -354,7 +352,6 @@ const Work = () => {
         "
       />
 
-      {/* Blue glow */}
       <div
         className="
           absolute
@@ -368,7 +365,6 @@ const Work = () => {
         "
       />
 
-      {/* Violet glow */}
       <div
         className="
           absolute
@@ -382,7 +378,6 @@ const Work = () => {
         "
       />
 
-      {/* Center glow */}
       <div
         className="
           absolute
@@ -396,7 +391,6 @@ const Work = () => {
         "
       />
 
-      {/* Vignette */}
       <div
         className="
           absolute
@@ -404,23 +398,19 @@ const Work = () => {
           bg-[radial-gradient(circle_at_center,transparent_25%,rgba(0,0,0,0.25)_70%,rgba(0,0,0,0.55)_100%)]
         "
       />
-
     </div>
 
     {/* TEXT — SENS INVERSE */}
-
-    <div className="relative flex w-max animate-[marqueeReverse_44s_linear_infinite]">
-
-      {[...work.marquee, ...work.marquee].map(
-        (item, index) => (
+    <div className="relative flex w-max animate-[marqueeReverse_80s_linear_infinite]">
+      {[...work.marquee, ...work.marquee].map((item, index) => (
+        <div key={`${item}-${index}`} className="flex items-center">
           <span
-            key={`${item}-${index}`}
             className="
-              mx-10
+              mx-3
               text-2xl
               font-black
               uppercase
-              tracking-[0.15em]
+              tracking-[0.12em]
               text-zinc-100
               md:text-3xl
               lg:text-4xl
@@ -428,13 +418,22 @@ const Work = () => {
           >
             {item}
           </span>
-        )
-      )}
 
+          <span
+            className="
+              text-xl
+              font-bold
+              text-primary
+              md:text-2xl
+              lg:text-3xl
+            "
+          >
+            /
+          </span>
+        </div>
+      ))}
     </div>
-
   </div>
-
 </div>
 
 

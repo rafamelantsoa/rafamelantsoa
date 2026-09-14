@@ -84,7 +84,7 @@ const PageLoader = () => {
             uppercase
           "
         >
-          Loading
+          MANDROAL
         </motion.div>
       </div>
     </motion.div>
